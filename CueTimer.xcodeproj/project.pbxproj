@@ -11,6 +11,8 @@
 		9146D9C02D4203ED00009FE9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9BF2D4203ED00009FE9 /* ContentView.swift */; };
 		9146D9C22D4203EF00009FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C12D4203EF00009FE9 /* Assets.xcassets */; };
 		9146D9C52D4203EF00009FE9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C42D4203EF00009FE9 /* Preview Assets.xcassets */; };
+		9146D9E62D42CC0500009FE9 /* ButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E52D42CC0500009FE9 /* ButtonStyle.swift */; };
+		9146D9EA2D4406E300009FE9 /* Intro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E92D4406E300009FE9 /* Intro.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -19,6 +21,8 @@
 		9146D9BF2D4203ED00009FE9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9146D9C12D4203EF00009FE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9146D9C42D4203EF00009FE9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		9146D9E52D42CC0500009FE9 /* ButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyle.swift; sourceTree = "<group>"; };
+		9146D9E92D4406E300009FE9 /* Intro.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Intro.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +56,9 @@
 			isa = PBXGroup;
 			children = (
 				9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */,
+				9146D9E92D4406E300009FE9 /* Intro.swift */,
 				9146D9BF2D4203ED00009FE9 /* ContentView.swift */,
+				9146D9E52D42CC0500009FE9 /* ButtonStyle.swift */,
 				9146D9C12D4203EF00009FE9 /* Assets.xcassets */,
 				9146D9C32D4203EF00009FE9 /* Preview Content */,
 			);
@@ -137,7 +143,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9146D9E62D42CC0500009FE9 /* ButtonStyle.swift in Sources */,
 				9146D9C02D4203ED00009FE9 /* ContentView.swift in Sources */,
+				9146D9EA2D4406E300009FE9 /* Intro.swift in Sources */,
 				9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
