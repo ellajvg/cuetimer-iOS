@@ -11,7 +11,7 @@ import SwiftUI
 struct CueTimerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Homepage()
         }
     }
 }

@@ -54,7 +54,7 @@ struct Homepage: View {
                         )
                         .padding(.bottom, 30)
                     }
-                    .padding(.bottom, 20)
+                    .padding(.bottom, 30)
                 }
                 .background(
                     Image("Background")
@@ -74,9 +74,9 @@ struct Homepage: View {
                         logoScale = 0.644
                         logoOffsetY = -UIScreen.main.bounds.height / 2.984
                     }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         goToHomepage = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             showAnimation = false
                         }
                     }
