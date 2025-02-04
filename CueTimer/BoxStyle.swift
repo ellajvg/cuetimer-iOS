@@ -24,7 +24,7 @@ struct BoxStyle: ViewModifier {
 }
 
 extension View {
-    func buttonStyle(foregroundStyle: Color, background: Color, shadowColor: Color) -> some View {
+    func boxStyle(foregroundStyle: Color, background: Color, shadowColor: Color) -> some View {
         self.modifier(BoxStyle(foregroundStyle: foregroundStyle, background: background, shadowColor: shadowColor))
     }
 }
