@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct ButtonStyle: ViewModifier {
+struct BoxStyle: ViewModifier {
     let foregroundStyle: Color
     let background: Color
-    private let shadowColor: Color = .black
+    let shadowColor: Color
 
     func body(content: Content) -> some View {
         content
-            .font(.title2)
+            .frame(maxWidth: .infinity)
             .foregroundStyle(foregroundStyle)
             .padding()
             .background(background)
@@ -24,7 +24,7 @@ struct ButtonStyle: ViewModifier {
 }
 
 extension View {
-    func buttonStyle(foregroundStyle: Color, background: Color) -> some View {
-        self.modifier(ButtonStyle(foregroundStyle: foregroundStyle, background: background))
+    func buttonStyle(foregroundStyle: Color, background: Color, shadowColor: Color) -> some View {
+        self.modifier(BoxStyle(foregroundStyle: foregroundStyle, background: background, shadowColor: shadowColor))
     }
 }
