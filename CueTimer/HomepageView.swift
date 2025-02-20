@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Homepage: View {
+struct HomepageView: View {
     @EnvironmentObject var entries: Entries
     @State private var logoScale: CGFloat = 1.0
     @State private var logoOffsetY: CGFloat = 0.0
@@ -15,9 +15,12 @@ struct Homepage: View {
     @State private var showAnimation: Bool
     @State private var animationCompleted: Bool
     
-    init(animationCompleted: Bool) {
+    let layoutProperties: LayoutProperties
+
+    init(animationCompleted: Bool, layoutProperties: LayoutProperties) {
         self._showAnimation = State(initialValue: !animationCompleted)
         self._animationCompleted = State(initialValue: animationCompleted)
+        self.layoutProperties = layoutProperties
     }
 
     var body: some View {
@@ -28,29 +31,33 @@ struct Homepage: View {
                         HStack {
                             Image(systemName: "person.fill")
                             Spacer()
-                            Image(systemName: "info.circle.fill")
                         }
-                        .font(.largeTitle)
+                        .font(.system(size: layoutProperties.customFontSize.large))
                         .padding(.horizontal, 20)
                         .foregroundColor(Color.accentColor)
                         Spacer()
-                            
                         VStack {
-                            NavigationLink("Timer", destination: TimerEntry(cuetimer: false))
+                            NavigationLink("Timer", destination:
+                                            TimerEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                            )
                             .boxStyle(
                                 foregroundStyle: .white,
                                 background: Color.accentColor,
                                 shadowColor: .black
                             )
                             .padding(.bottom, 30)
-                            NavigationLink("Exercise cues", destination: CueEntry(cuetimer: false))
+                            NavigationLink("Exercise cues", destination: 
+                                CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                            )
                             .boxStyle(
                                 foregroundStyle: .white,
                                 background: Color.accentColor,
                                 shadowColor: .black
                             )
                             .padding(.bottom, 30)
-                            NavigationLink("CueTimer", destination: CueEntry(cuetimer: true))
+                            NavigationLink("CueTimer", destination:
+                                CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
+                            )
                             .boxStyle(
                                 foregroundStyle: .black,
                                 background: .white,
@@ -58,14 +65,16 @@ struct Homepage: View {
                             )
                             .padding(.bottom, 30)
                         }
-                        .font(.title2)
+                        .font(.system(size: layoutProperties.customFontSize.smallMedium))
                         .padding(.horizontal, 80)
                         .padding(.bottom, 30)
                     }
                     .background(
                         Image("Background")
+                            .resizable()
                             .ignoresSafeArea()
-                            .offset(y:250)
+                            .offset(y:layoutProperties.customDimensValue.large)
+                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
                     )
                     
                 }
@@ -100,23 +109,17 @@ struct Homepage: View {
             entries.reset()
         }
         .navigationBarBackButtonHidden(true)
-        .environmentObject(entries)
     }
 }
 
-struct Intro_Previews: PreviewProvider {
+struct HomepageView_Previews: PreviewProvider {
     static var previews: some View {
-        Homepage(animationCompleted: false).environmentObject(Entries())
+        ResponsiveView { layoutProperties in
+            HomepageView(animationCompleted: false, layoutProperties: layoutProperties)
+        }
+        .environmentObject(Entries())
     }
 }
 
-class Entries: ObservableObject {
-    @Published var exercises: [ExerciseEntry] = []
-    @Published var timer: Timer = Timer(workPeriods: [30])
-    
-    func reset() {
-        exercises = []
-        timer = Timer(workPeriods: [30])
-    }
-}
+
 

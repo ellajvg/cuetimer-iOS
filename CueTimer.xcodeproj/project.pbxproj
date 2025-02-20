@@ -7,28 +7,36 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9123AB012D61651800E026E0 /* TimerWorkout.swift */; };
 		9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */; };
 		9146D9C22D4203EF00009FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C12D4203EF00009FE9 /* Assets.xcassets */; };
 		9146D9C52D4203EF00009FE9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C42D4203EF00009FE9 /* Preview Assets.xcassets */; };
 		9146D9E62D42CC0500009FE9 /* BoxStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E52D42CC0500009FE9 /* BoxStyle.swift */; };
-		9146D9EA2D4406E300009FE9 /* Homepage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E92D4406E300009FE9 /* Homepage.swift */; };
-		9146D9EC2D482B0200009FE9 /* CueEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9EB2D482B0100009FE9 /* CueEntry.swift */; };
-		9146D9EE2D482B1E00009FE9 /* TimerEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9ED2D482B1E00009FE9 /* TimerEntry.swift */; };
-		91853D892D4D7E4400E619D3 /* CueWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D882D4D7E4400E619D3 /* CueWorkout.swift */; };
-		91853D8B2D4D7E6C00E619D3 /* CueTimerWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D8A2D4D7E6C00E619D3 /* CueTimerWorkout.swift */; };
+		9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E92D4406E300009FE9 /* HomepageView.swift */; };
+		9146D9EC2D482B0200009FE9 /* CueEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9EB2D482B0100009FE9 /* CueEntryView.swift */; };
+		9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */; };
+		916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C24162D5D69F30015D4AB /* CueWorkout.swift */; };
+		916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C241A2D5F1C7C0015D4AB /* Entries.swift */; };
+		91853D892D4D7E4400E619D3 /* CueWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */; };
+		91853D8B2D4D7E6C00E619D3 /* CueTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */; };
+		918E329B2D5A97D9006828EB /* ResponsiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E329A2D5A97D9006828EB /* ResponsiveView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9123AB012D61651800E026E0 /* TimerWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerWorkout.swift; sourceTree = "<group>"; };
 		9146D9BA2D4203ED00009FE9 /* CueTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerApp.swift; sourceTree = "<group>"; };
 		9146D9C12D4203EF00009FE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9146D9C42D4203EF00009FE9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		9146D9E52D42CC0500009FE9 /* BoxStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxStyle.swift; sourceTree = "<group>"; };
-		9146D9E92D4406E300009FE9 /* Homepage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Homepage.swift; sourceTree = "<group>"; };
-		9146D9EB2D482B0100009FE9 /* CueEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueEntry.swift; sourceTree = "<group>"; };
-		9146D9ED2D482B1E00009FE9 /* TimerEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEntry.swift; sourceTree = "<group>"; };
-		91853D882D4D7E4400E619D3 /* CueWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkout.swift; sourceTree = "<group>"; };
-		91853D8A2D4D7E6C00E619D3 /* CueTimerWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerWorkout.swift; sourceTree = "<group>"; };
+		9146D9E92D4406E300009FE9 /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
+		9146D9EB2D482B0100009FE9 /* CueEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueEntryView.swift; sourceTree = "<group>"; };
+		9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEntryView.swift; sourceTree = "<group>"; };
+		916C24162D5D69F30015D4AB /* CueWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkout.swift; sourceTree = "<group>"; };
+		916C241A2D5F1C7C0015D4AB /* Entries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entries.swift; sourceTree = "<group>"; };
+		91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkoutView.swift; sourceTree = "<group>"; };
+		91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerView.swift; sourceTree = "<group>"; };
+		918E329A2D5A97D9006828EB /* ResponsiveView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsiveView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,12 +70,16 @@
 			isa = PBXGroup;
 			children = (
 				9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */,
+				9146D9E92D4406E300009FE9 /* HomepageView.swift */,
+				918E329A2D5A97D9006828EB /* ResponsiveView.swift */,
+				9146D9EB2D482B0100009FE9 /* CueEntryView.swift */,
+				9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */,
+				91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */,
+				91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */,
+				916C241A2D5F1C7C0015D4AB /* Entries.swift */,
+				916C24162D5D69F30015D4AB /* CueWorkout.swift */,
+				9123AB012D61651800E026E0 /* TimerWorkout.swift */,
 				9146D9E52D42CC0500009FE9 /* BoxStyle.swift */,
-				9146D9E92D4406E300009FE9 /* Homepage.swift */,
-				9146D9EB2D482B0100009FE9 /* CueEntry.swift */,
-				9146D9ED2D482B1E00009FE9 /* TimerEntry.swift */,
-				91853D882D4D7E4400E619D3 /* CueWorkout.swift */,
-				91853D8A2D4D7E6C00E619D3 /* CueTimerWorkout.swift */,
 				9146D9C12D4203EF00009FE9 /* Assets.xcassets */,
 				9146D9C32D4203EF00009FE9 /* Preview Content */,
 			);
@@ -152,12 +164,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9146D9EC2D482B0200009FE9 /* CueEntry.swift in Sources */,
-				91853D892D4D7E4400E619D3 /* CueWorkout.swift in Sources */,
-				9146D9EE2D482B1E00009FE9 /* TimerEntry.swift in Sources */,
+				9146D9EC2D482B0200009FE9 /* CueEntryView.swift in Sources */,
+				91853D892D4D7E4400E619D3 /* CueWorkoutView.swift in Sources */,
+				918E329B2D5A97D9006828EB /* ResponsiveView.swift in Sources */,
+				9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */,
+				916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */,
 				9146D9E62D42CC0500009FE9 /* BoxStyle.swift in Sources */,
-				9146D9EA2D4406E300009FE9 /* Homepage.swift in Sources */,
-				91853D8B2D4D7E6C00E619D3 /* CueTimerWorkout.swift in Sources */,
+				916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */,
+				9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */,
+				9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */,
+				91853D8B2D4D7E6C00E619D3 /* CueTimerView.swift in Sources */,
 				9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,8 +314,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -327,8 +342,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -17,7 +17,10 @@ struct CueTimerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Homepage(animationCompleted: false).environmentObject(entries)
+            ResponsiveView { layoutProperties in
+                HomepageView(animationCompleted: false, layoutProperties: layoutProperties)
+                    .environmentObject(entries)
+            }
         }
     }
 }

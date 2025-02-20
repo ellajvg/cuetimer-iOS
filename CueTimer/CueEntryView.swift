@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-struct CueEntry: View {
+struct CueEntryView: View {
     @EnvironmentObject var entries: Entries
-    @State private var newExercise = ExerciseEntry()
+    @State private var newExercise = CueEntry()
     @State private var exerciseToDelete: IndexSet?
     @State private var showEmptyExercisesAlert = false
-    @State private var showUnsubmittedExerciseAlert = false
-    @State private var navigateToWorkout = false
+    @State private var showUnaddedExerciseAlert = false
+    @State private var navigateToCueWorkout = false
     
-    var cuetimer: Bool
+    let cuetimer: Bool
+    let layoutProperties: LayoutProperties
     
     var body: some View {
         NavigationStack {
@@ -24,9 +25,9 @@ struct CueEntry: View {
                     .fontWeight(.bold)
                     .foregroundStyle(Color.accentColor)
                     .padding(.top, 10)
-                    .font(.largeTitle)
+                    .font(.system(size: layoutProperties.customFontSize.large))
                     
-                    if entries.exercises.isEmpty {
+                    if entries.cueEntries.isEmpty {
                         Text("Added exercises will appear here!")
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -35,25 +36,26 @@ struct CueEntry: View {
                             .padding(.top, 4)
                             .padding(.leading, 20)
                             .padding(.trailing, 20)
+                            .font(.system(size: layoutProperties.customFontSize.small))
                     }
                     ScrollViewReader { proxy in
                         List {
-                            ForEach(entries.exercises.indices, id: \.self) { index in
-                                let exercise = entries.exercises[index]
+                            ForEach(entries.cueEntries.indices, id: \.self) { index in
+                                let cue = entries.cueEntries[index]
                                 HStack {
-                                    Text(exercise.exercise)
-                                        .frame(width: 90, alignment: .leading)
+                                    Text(cue.exercise)
+                                        .frame(width: layoutProperties.customDimensValue.mediumLarge, alignment: .leading)
                                         .lineLimit(1)
                                         .truncationMode(.tail)
                                     Spacer()
-                                    Text("Reps: " + "\(exercise.reps)")
-                                        .frame(width: 66, alignment: .leading)
+                                    Text("Reps: " + "\(cue.reps)")
+                                        .frame(width: layoutProperties.customDimensValue.medium, alignment: .leading)
                                     Spacer()
-                                    Text("Sets: " + "\(exercise.sets)")
-                                        .frame(width: 66, alignment: .leading)
+                                    Text("Sets: " + "\(cue.sets)")
+                                        .frame(width: layoutProperties.customDimensValue.medium, alignment: .leading)
                                     Spacer()
-                                    Text(exercise.rightLeft ? "R/L: Yes" : "R/L: No")
-                                        .frame(width: 66, alignment: .leading)
+                                    Text(cue.rightLeft ? "R/L: Yes" : "R/L: No")
+                                        .frame(width: layoutProperties.customDimensValue.medium, alignment: .leading)
                                     Spacer()
                                     
                                 }
@@ -62,7 +64,7 @@ struct CueEntry: View {
                                 .listRowSeparator(.hidden)
                                 .swipeActions(edge: .trailing) {
                                     Button(role: .destructive) {
-                                        entries.exercises.remove(at: index)
+                                        entries.cueEntries.remove(at: index)
                                     } label: {
                                         Image(systemName: "trash")
                                     }
@@ -71,6 +73,7 @@ struct CueEntry: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
+                            .font(.system(size: layoutProperties.customFontSize.small))
                             .background(Color(red: 196/255, green: 217/255, blue: 220/255))
                             .cornerRadius(10)
                             .padding(.top, 4)
@@ -80,15 +83,15 @@ struct CueEntry: View {
                             
                         }
                         .listStyle(PlainListStyle())
-                        .onChange(of: entries.exercises.count) {
+                        .onChange(of: entries.cueEntries.count) {
                             withAnimation {
-                                proxy.scrollTo(entries.exercises.indices.last, anchor: .bottom)
+                                proxy.scrollTo(entries.cueEntries.indices.last, anchor: .bottom)
                             }
                         }
                     }
                 
                     VStack(spacing: 20) {
-                        ExerciseRow(entry: $newExercise)
+                        ExerciseRow(entry: $newExercise, layoutProperties: layoutProperties)
                             .boxStyle(
                                 foregroundStyle: .black,
                                 background: .white,
@@ -98,58 +101,59 @@ struct CueEntry: View {
                         HStack(spacing: 20) {
                             Button("Add exercise") {
                                 if !newExercise.exercise.isEmpty {
-                                    entries.exercises.append(newExercise)
-                                    newExercise = ExerciseEntry()
+                                    entries.cueEntries.append(newExercise)
+                                    newExercise = CueEntry()
                                 }
                             }
+                            .font(.system(size: layoutProperties.customFontSize.small))
                             .boxStyle(
                                 foregroundStyle: .black,
                                 background: .white,
                                 shadowColor: .gray
                             )
                             
-                            if !cuetimer {
-                                VStack {
-                                    if entries.exercises.count == 0 {
-                                        Button ("Start workout") {
-                                            showEmptyExercisesAlert = true
-                                        }
-                                        .alert("No exercises added", isPresented: $showEmptyExercisesAlert) {
-                                                Button("OK", role: .cancel) { }
-                                            } message: {
-                                                Text("Please add at least one exercise to your workout!")
-                                            }
-                                    } else if !newExercise.exercise.isEmpty {
-                                        Button ("Start workout") {
-                                            showUnsubmittedExerciseAlert = true
-                                        }
-                                        .alert("Unsubmitted exercise", isPresented: $showUnsubmittedExerciseAlert) {
-                                            Button("No", role: .cancel) { }
-                                            Button("Yes") {
-                                                navigateToWorkout = true
-                                            }
-                                        } message: {
-                                            Text("You have an unsubmitted exercise, would you like to proceed without it?")
-                                        }
-                                    } else {
-                                        NavigationLink("Start workout", destination: CueWorkout())
+                            VStack {
+                                let buttonText: String = cuetimer ? "Create timer" : "Start workout"
+                                if entries.cueEntries.count == 0 {
+                                    Button (buttonText) {
+                                        showEmptyExercisesAlert = true
                                     }
+                                    .alert("No exercises added", isPresented: $showEmptyExercisesAlert) {
+                                            Button("OK", role: .cancel) { }
+                                    } message: {
+                                        Text("Please add at least one exercise!")
+                                    }
+                                } else if !newExercise.exercise.isEmpty {
+                                    Button (buttonText) {
+                                        showUnaddedExerciseAlert = true
+                                    }
+                                    .alert("Unadded exercise", isPresented: $showUnaddedExerciseAlert) {
+                                        Button("No", role: .cancel) { }
+                                        Button("Yes") {
+                                            navigateToCueWorkout = true
+                                        }
+                                    } message: {
+                                        Text("Would you like to proceed without it?")
+                                    }
+                                } else if !cuetimer {
+                                    NavigationLink("Start workout", destination: CueWorkoutView(cuetimer: false, cueWorkout: CueWorkout(cueEntries: entries.cueEntries), layoutProperties: layoutProperties))
+                                } else {
+                                    NavigationLink("Create timer", destination: TimerEntryView(cuetimer: true, layoutProperties: layoutProperties))
                                 }
-                                .boxStyle(
-                                    foregroundStyle: .white,
-                                    background: Color.accentColor,
-                                    shadowColor: .gray
-                                )
-                                .navigationDestination(isPresented: $navigateToWorkout) {
-                                    CueWorkout()
+                            }
+                            .font(.system(size: layoutProperties.customFontSize.small))
+                            .boxStyle(
+                                foregroundStyle: .white,
+                                background: Color.accentColor,
+                                shadowColor: .gray
+                            )
+                            .navigationDestination(isPresented: $navigateToCueWorkout) {
+                                if !cuetimer {
+                                    CueWorkoutView(cuetimer: false, cueWorkout: CueWorkout(cueEntries: entries.cueEntries), layoutProperties: layoutProperties)
+                                } else {
+                                    TimerEntryView(cuetimer: true, layoutProperties: layoutProperties)
                                 }
-                            } else {
-                                NavigationLink("Create timer", destination: TimerEntry(cuetimer: true))
-                                    .boxStyle(
-                                        foregroundStyle: .white,
-                                        background: Color.accentColor,
-                                        shadowColor: .gray
-                                    )
+                                
                             }
                         }
                     }
@@ -157,17 +161,13 @@ struct CueEntry: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        NavigationLink(destination: Homepage(animationCompleted: true)) {
+                        NavigationLink(destination: ResponsiveView { layoutProperties in
+                            HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
+                        }) {
                             Image(systemName: "arrow.left.circle.fill")
-                                .font(.title)
+                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
                                 .foregroundColor(Color.accentColor)
                         }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Image(systemName: "info.circle.fill")
-                            .font(.title)
-                            .foregroundColor(Color.accentColor)
                     }
                 }
             }
@@ -177,11 +177,13 @@ struct CueEntry: View {
 
 
 struct ExerciseRow: View {
-    @Binding var entry: ExerciseEntry
+    @Binding var entry: CueEntry
+    let layoutProperties: LayoutProperties
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Exercise")
+                .font(.system(size: layoutProperties.customFontSize.small))
             
             TextField("", text: $entry.exercise)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -198,7 +200,8 @@ struct ExerciseRow: View {
                     }
                     .pickerStyle(MenuPickerStyle())
                     .tint(.black)
-                    .frame(maxWidth: 60)
+                    .frame(maxWidth: 65)
+                    
                 }
                 Spacer()
                 VStack(alignment: .leading, spacing: 8) {
@@ -211,7 +214,7 @@ struct ExerciseRow: View {
                     }
                     .pickerStyle(MenuPickerStyle())
                     .tint(.black)
-                    .frame(maxWidth: 60)
+                    .frame(maxWidth: 65)
                 }
                 Spacer()
                 
@@ -221,14 +224,15 @@ struct ExerciseRow: View {
                     Toggle("", isOn: $entry.rightLeft)
                         .toggleStyle(SwitchToggleStyle(tint: .accentColor))
                         .labelsHidden()
-                        .frame(width: 60, alignment: .leading)
+                        .frame(width: 65, alignment: .leading)
                 }
             }
+            .font(.system(size: layoutProperties.customFontSize.small))
         }
     }
 }
 
-struct ExerciseEntry {
+struct CueEntry {
     var exercise: String = ""
     var reps: Int = 1
     var sets: Int = 1
@@ -237,6 +241,9 @@ struct ExerciseEntry {
 
 struct CueEntry_Previews: PreviewProvider {
     static var previews: some View {
-        CueEntry(cuetimer: false).environmentObject(Entries())
+        ResponsiveView { layoutProperties in
+            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                .environmentObject(Entries())
+        }
     }
 }
