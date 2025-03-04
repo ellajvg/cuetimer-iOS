@@ -7,64 +7,50 @@
 
 import SwiftUI
 
-@Observable
-class CueWorkout {
-    var curr = 0
-    var completed = 1
+class CueWorkout: ObservableObject {
+    @Published var curr = 0
     var total: Int { cues.count }
     
     let cueEntries: [CueEntry]
+    let cuetimer: Bool
     var cues: [ExerciseCue]
     
-    init(cueEntries: [CueEntry]) {
+    init(cueEntries: [CueEntry], cuetimer: Bool) {
         self.cueEntries = cueEntries
+        self.cuetimer = cuetimer
         self.cues = []
         self.cues = createExerciseArray()
     }
 
     func goToPreviousExercise() {
-        if (curr == total) {
-            curr-=1
-        } else if curr != 0 {
-            if (cues[curr].side != nil && cues[curr].side == "R") {
-                completed -= 1
-            } else if cues[curr].side == nil {
-                completed -= 1
-            }
-            curr -= 1
-        }
+        curr-=1
     }
     
     func goToNextExercise() {
-        if curr < total {
-            if (cues[curr].side != nil && cues[curr].side == "L") {
-                completed += 1
-            } else if cues[curr].side == nil {
-                completed += 1
-            }
-            curr += 1
-        }
+        curr += 1
     }
     
-    func endWorkout() {
-        if curr < total {
-            curr += 1
-        }
+    func setCurr(newCurr: Int) {
+        curr = newCurr
     }
     
     func findNextExercise() -> String {
-        if curr < total {
-            if curr+1 < total {
-                return "Next exercise: " + cues[curr].exercise
-            } else {
-                return "This is your last set!"
-            }
+        if cuetimer && curr == 0 &&  curr + 1 < total {
+            return "First exercise: " + cues[curr+1].exercise
+        } else if curr + 1 < total {
+            return "Next exercise: " + cues[curr+1].exercise
+        } else if curr + 1 == total {
+            return "This is your last set!"
         }
         return "Go flex in the mirror :)"
     }
     
     func createExerciseArray() -> [ExerciseCue] {
         var exercises: [ExerciseCue] = []
+        
+        if cuetimer {
+            exercises.append(ExerciseCue(exercise: "Get ready!"))
+        }
         
         for entry in cueEntries {
             var set = 1
@@ -83,11 +69,10 @@ class CueWorkout {
     }
     
     var previousButtonDisabled: Bool {
-        guard curr > 0 else {return true}
-        return false
+        curr <= 0
     }
+    
     var endButtonDisabled: Bool {
-        guard curr < total else {return true}
-        return false
+        curr >= total
     }
 }

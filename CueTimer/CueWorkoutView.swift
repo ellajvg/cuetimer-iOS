@@ -9,102 +9,94 @@ import SwiftUI
 
 struct CueWorkoutView: View {
     @EnvironmentObject var entries: Entries
-    //@State private var curr: Int = 0
-    //@State private var completed: Int = 1
+    @ObservedObject var cueWorkout: CueWorkout
+    
+    @State private var showEditAlert = false
     @State private var showExitAlert = false
     @State private var navigateToCueEntry = false
     @State private var navigateToHomepage = false
     
+    private var dark: Color { showEditAlert || showExitAlert ? Color(red: 110/256, green: 110/256, blue: 110/256) : Color.darkAccent
+    }
+    
+    private var light: Color { showEditAlert || showExitAlert ? Color(red: 210/256, green: 210/256, blue: 210/256) : Color.lightAccent
+    }
+    
     let cuetimer: Bool
-    let cueWorkout: CueWorkout
     let layoutProperties: LayoutProperties
-    
-    //var cues: [ExerciseCue] { entries.cues }
-    //var total: Int { entries.cues.count }
-    
-    //var previousButtonDisabled: Bool {
-    //    guard cueWorkoutModel.curr > 0 else {return true}
-    //    return false
-    //}
-    //var endButtonDisabled: Bool {
-    //    guard cueWorkoutModel.curr > cueWorkoutModel.total else //{return true}
-   //     return false
-    //}
     
     var body: some View {
         NavigationStack {
-            VStack {
-                if !cuetimer {
+            ZStack {
+                VStack {
                     Spacer()
                     ZStack {
                         Circle()
                             .stroke(lineWidth: layoutProperties.customDimensValue.small)
-                            .foregroundStyle(Color(red: 196/255, green: 217/255, blue: 220/255))
+                            .foregroundStyle(light)
                         Circle()
                             .trim(from: 0.0, to: CGFloat(cueWorkout.curr) / CGFloat(cueWorkout.total))
-                            .stroke(Color.accentColor, style: StrokeStyle(
-                            lineWidth: layoutProperties.customDimensValue.small,
-                            lineCap: .round,
-                            lineJoin: .miter
+                            .stroke(dark, style: StrokeStyle(
+                                lineWidth: layoutProperties.customDimensValue.small,
+                                lineCap: .round,
+                                lineJoin: .miter
                             ))
                             .rotationEffect(.degrees(-90))
-                       
-                        Text("\(cueWorkout.completed)/\(cueWorkout.total)")
-                                .monospacedDigit()
-                                .font(.system(size: layoutProperties.customFontSize.giant))
-                                .foregroundStyle(Color.accentColor)
-                                .bold()
-                                .contentTransition(.numericText())
-                            
+                        
+                        Text("\(cueWorkout.curr)/\(cueWorkout.total)")
+                            .monospacedDigit()
+                            .font(.system(size: layoutProperties.customFontSize.giant))
+                            .foregroundStyle(dark)
+                            .bold()
+                            .contentTransition(.numericText())
                     }
                     .padding(.horizontal, layoutProperties.customDimensValue.smallMedium)
-                    .animation(.linear, value: cueWorkout.completed)
-                }
-                VStack(spacing: 15) {
-                    if cueWorkout.curr < cueWorkout.total {
-                        VStack {
-                            Spacer()
-                            Text(cueWorkout.cues[cueWorkout.curr].exercise)
-                                .font(.system(size: layoutProperties.customFontSize.medium))
-                                .multilineTextAlignment(.center)
-                            Spacer()
-                            HStack {
-                                Text(cueWorkout.cues[cueWorkout.curr].set)
+                    .animation(.linear, value: cueWorkout.curr)
+                    
+                    VStack(spacing: 15) {
+                        if cueWorkout.curr < cueWorkout.total {
+                            VStack {
                                 Spacer()
-                                if cueWorkout.cues[cueWorkout.curr].side != nil {
-                                    Text(cueWorkout.cues[cueWorkout.curr].side!)
+                                Text(cueWorkout.cues[cueWorkout.curr].exercise)
+                                    .font(.system(size: layoutProperties.customFontSize.medium))
+                                    .multilineTextAlignment(.center)
+                                Spacer()
+                                HStack {
+                                    Text(cueWorkout.cues[cueWorkout.curr].set!)
                                     Spacer()
+                                    if cueWorkout.cues[cueWorkout.curr].side != nil {
+                                        Text(cueWorkout.cues[cueWorkout.curr].side!)
+                                        Spacer()
+                                    }
+                                    
+                                    Text(cueWorkout.cues[cueWorkout.curr].reps!)
                                 }
+                                .font(.system(size: layoutProperties.customFontSize.small))
                                 
-                                Text(cueWorkout.cues[cueWorkout.curr].reps)
                             }
-                            .font(.system(size: layoutProperties.customFontSize.small))
-                            
+                            .padding(5)
+                            .frame(height: 110)
+                            .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
+                        } else {
+                            VStack {
+                                Text("Workout complete!")
+                                    .font(.system(size: layoutProperties.customFontSize.medium))
+                            }
+                            .padding(5)
+                            .frame(height: 110)
+                            .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
                         }
-                        .padding(5)
-                        .frame(height: 110)
-                        .boxStyle(foregroundStyle: .white, background: .accentColor, shadowColor: .white)
-                    } else {
                         VStack {
-                            Text("Workout complete!")
-                                .font(.system(size: layoutProperties.customFontSize.medium))
+                            Text(cueWorkout.findNextExercise())
+                                .font(.system(size: layoutProperties.customFontSize.small))
                         }
-                        .padding(5)
-                        .frame(height: 110)
-                        .boxStyle(foregroundStyle: .white, background: .accentColor, shadowColor: .white)
+                        .boxStyle(
+                            foregroundStyle: .black,
+                            background: light,
+                            shadowColor: .white
+                        )
                     }
-                    VStack {
-                        Text(cueWorkout.findNextExercise())
-                            .font(.system(size: layoutProperties.customFontSize.small))
-                    }
-                    .boxStyle(
-                        foregroundStyle: .black,
-                        background: Color(red: 196/255, green: 217/255, blue: 220/255),
-                        shadowColor: .white
-                    )
-                }
-                .padding(.horizontal, 20)
-                if !cuetimer {
+                    .padding(.horizontal, 20)
                     Spacer()
                     HStack {
                         Button {
@@ -112,35 +104,25 @@ struct CueWorkoutView: View {
                         } label: {
                             Image(systemName: "arrowshape.backward.fill")
                         }
-                        .foregroundStyle(cueWorkout.previousButtonDisabled ? Color(red: 196/255, green: 217/255, blue: 220/255) : Color.accentColor)
+                        .foregroundStyle(cueWorkout.previousButtonDisabled ? light : dark)
                         .disabled(cueWorkout.previousButtonDisabled)
                         Spacer()
-                        if (cueWorkout.curr + 1 < cueWorkout.total) {
-                            Button {
-                                cueWorkout.goToNextExercise()
-                            } label : {
-                                Image(systemName: "arrowshape.forward.fill")
-                            }
-                        } else {
-                            Button {
-                                cueWorkout.endWorkout()
-                            } label: {
-                                Image(systemName: "checkmark.circle.fill")
-                            }
-                            .foregroundStyle(cueWorkout.endButtonDisabled ? Color(red: 196/255, green: 217/255, blue: 220/255) : Color.accentColor)
-                            .disabled(cueWorkout.endButtonDisabled)
+                        Button {
+                            cueWorkout.goToNextExercise()
+                        } label : {
+                            Image(systemName: "arrowshape.forward.fill")
                         }
-                            
-                        
+                        .foregroundStyle(cueWorkout.endButtonDisabled ?  light : dark)
+                        .disabled(cueWorkout.endButtonDisabled)
                     }
                     .padding(.bottom, 10)
                     .padding(.horizontal, 21)
                     .font(.system(size: layoutProperties.customFontSize.large))
                 }
-            }
-            .toolbar {
-                if !cuetimer {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                .overlay(showEditAlert || showExitAlert ? .gray.opacity(0.3) : .gray.opacity(0.0))
+                .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button {
                             if cueWorkout.curr < cueWorkout.total {
                                 showExitAlert = true
@@ -148,38 +130,97 @@ struct CueWorkoutView: View {
                                 navigateToHomepage = true
                             }
                         } label: {
-                            Image(systemName: "arrow.left.circle.fill")
+                            Image(systemName: "house.fill")
                                 .font(.system(size: layoutProperties.customFontSize.mediumLarge))
-                                .foregroundColor(Color.accentColor)
-                        }.alert("Progress will be lost", isPresented: $showExitAlert) {
-                            Button("No", role: .cancel) { }
-                            Button("Yes") {
-                                navigateToCueEntry = true
-                            }
-                        } message: {
-                            Text("Do you still want to exit this workout?")
-                        }
-                        .navigationDestination(isPresented: $navigateToCueEntry) {
-                            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                                .foregroundColor(dark)
+                                .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
                         }
                         .navigationDestination(isPresented: $navigateToHomepage) {
                             HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
                         }
                     }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showEditAlert = true
+                        } label: {
+                            Image(systemName: "pencil.line")
+                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
+                                .foregroundStyle(dark)
+                                .blur(radius: showEditAlert || showExitAlert ? 1.0 : 0.0)
+                        }
+                        .navigationDestination(isPresented: $navigateToCueEntry) {
+                            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                        }
+                    }
+                }
+                
+                if showEditAlert || showExitAlert {
+                    let alertTitle = "Progress will be lost"
+                    let alertText = showEditAlert ? "Do you still want to edit this workout?" : "Do you still want to exit this workout?"
+                    VStack(spacing: 0) {
+                        Text(alertTitle)
+                            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                            .fontWeight(.semibold)
+                            .padding(.top, 20)
+                            .padding(.horizontal, 10)
+                            
+                        Text(alertText)
+                            .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                            .padding(.top, 5)
+                            .padding(.bottom, 15)
+                        
+                        
+                        Divider()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 0.3)
+                            .background(Color.gray.opacity(0.1))
+                       
+                       
+                        HStack(spacing: 0) {
+                            Button("No") {
+                                showEditAlert = false
+                                showExitAlert = false
+                            }
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                            Divider()
+                                .frame(height: 40)
+                                .background(Color.gray.opacity(0.01))
+                            Button("Yes") {
+                                if showEditAlert {
+                                    showEditAlert = false
+                                    navigateToCueEntry = true
+                                } else {
+                                    showExitAlert = false
+                                    navigateToHomepage = true
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(10)
+                        }
+                        .foregroundStyle(Color.accentColor)
+                        .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                    }
+                    .frame(maxWidth: .infinity)
+                    .foregroundStyle(.black)
+                    .background(.white)
+                    .cornerRadius(10)
+                    .shadow(color: .gray, radius: 5, y: 5)
+                    .padding(.horizontal, 50)
+                    .padding(.bottom, 60)
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
-        .onAppear(
-            
-        )
     }
 }
 
 struct ExerciseCue {
     var exercise: String
-    var reps: String
-    var set: String
+    var reps: String?
+    var set: String?
     var side: String?
 }
 
@@ -189,7 +230,7 @@ struct CueWorkout_Previews: PreviewProvider {
         let entries = Entries()
     
         ResponsiveView { layoutProperties in
-            CueWorkoutView(cuetimer: false, cueWorkout: CueWorkout(cueEntries: entries.cueEntries), layoutProperties: layoutProperties).environmentObject(entries)
+            CueWorkoutView(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, layoutProperties: layoutProperties).environmentObject(entries)
         }
     }
 }

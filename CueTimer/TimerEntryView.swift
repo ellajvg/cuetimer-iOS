@@ -19,36 +19,43 @@ struct TimerEntryView: View {
                     Text("Work")
                         .font(.system(size: layoutProperties.customFontSize.smallMedium))
                         .fontWeight(.bold)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.darkAccent)
                         .padding(.top, 10)
                         
                     WorkPeriodList(workPeriods: $entries.timerEntry.workPeriods, layoutProperties: layoutProperties)
                     
                     HStack {
+                        let isDisabled = entries.timerEntry.workPeriods.count <= 1
+                        
                         Spacer()
                         Button(role: .destructive) {
                             if entries.timerEntry.workPeriods.count > 1 {
-                                entries.timerEntry.workPeriods.removeLast()
+                                withTransaction(Transaction(animation: nil)) {
+                                    entries.timerEntry.workPeriods.removeLast()
+                                }
                             }
                         } label: {
                             Image(systemName: "minus.circle.fill")
                                 .font(.system(size: layoutProperties.customFontSize.small))
                         }
+                        .disabled(isDisabled)
+                        .foregroundStyle(isDisabled ? Color.lightAccent : Color.darkAccent)
                         
                         Button {
-                            entries.timerEntry.workPeriods.append(30)
+                            withTransaction(Transaction(animation: nil)) { entries.timerEntry.workPeriods.append(30)
+                            }
                         } label: {
                             Image(systemName: "plus.circle.fill")
                                 .font(.system(size: layoutProperties.customFontSize.small))
                         }
                     }
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.darkAccent)
                     .font(.title3)
                     
                     Text("Rest")
                         .font(.system(size: layoutProperties.customFontSize.smallMedium))
                         .fontWeight(.bold)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.darkAccent)
                 
                     HStack {
                         if entries.timerEntry.workPeriods.count > 1 {
@@ -73,7 +80,7 @@ struct TimerEntryView: View {
                     .padding(.vertical, 5)
                     .padding(.leading, 15)
                     .padding(.trailing, 5)
-                    .background(Color(red: 196/255, green: 217/255, blue: 220/255))
+                    .background(Color.lightAccent)
                     .cornerRadius(10)
                     
                     if entries.timerEntry.workPeriods.count > 1 {
@@ -96,7 +103,7 @@ struct TimerEntryView: View {
                         .padding(.vertical, 5)
                         .padding(.leading, 15)
                         .padding(.trailing, 5)
-                        .background(Color(red: 196/255, green: 217/255, blue: 220/255))
+                        .background(Color.lightAccent)
                         .cornerRadius(10)
                     }
                     
@@ -104,7 +111,7 @@ struct TimerEntryView: View {
                         Text("Repeats")
                             .font(.system(size: layoutProperties.customFontSize.smallMedium))
                             .fontWeight(.bold)
-                            .foregroundStyle(Color.accentColor)
+                            .foregroundStyle(Color.darkAccent)
                             .padding(.top, 20)
                         
                         HStack {
@@ -122,7 +129,7 @@ struct TimerEntryView: View {
                         .padding(.vertical, 5)
                         .padding(.leading, 15)
                         .padding(.trailing, 5)
-                        .background(Color(red: 196/255, green: 217/255, blue: 220/255))
+                        .background(Color.lightAccent)
                         .cornerRadius(10)
                     }
                 }
@@ -133,35 +140,37 @@ struct TimerEntryView: View {
                 )
                 .padding(.horizontal, 20)
                 .padding(.bottom, 15)
-                .padding(.top, 25)
+                .padding(.top, 30)
                 Spacer()
-                NavigationLink("Start workout", destination: CueTimerView(cuetimer: cuetimer, cueWorkout: CueWorkout(cueEntries: entries.cueEntries), timerWorkout: TimerWorkout(cuetimer: cuetimer, timerEntry: entries.timerEntry, cueWorkout: CueWorkout(cueEntries: entries.cueEntries)), layoutProperties: layoutProperties)).environmentObject(Entries())
-                    .boxStyle(
-                        foregroundStyle: .white,
-                        background: Color.accentColor,
-                        shadowColor: .gray
-                    )
-                    .font(.system(size: layoutProperties.customFontSize.small))
-                    .padding()
+                HStack(spacing: 20) {
+                    if cuetimer {
+                        NavigationLink("Edit cues", destination: CueEntryView(cuetimer: cuetimer, layoutProperties: layoutProperties))
+                            .boxStyle(
+                                foregroundStyle: .black,
+                                background: .white,
+                                shadowColor: .gray
+                            )
+                            .font(.system(size: layoutProperties.customFontSize.small))
+                    }
+                    NavigationLink("Start workout", destination: CueTimerView(timerWorkout: TimerWorkout(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: cuetimer), cuetimer: cuetimer, timerEntry: entries.timerEntry), cuetimer: cuetimer, layoutProperties: layoutProperties))
+                        .boxStyle(
+                            foregroundStyle: .white,
+                            background: Color.darkAccent,
+                            shadowColor: .gray
+                        )
+                        .font(.system(size: layoutProperties.customFontSize.small))
+                }
+                .padding()
+                
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if !cuetimer {
-                        NavigationLink(destination: ResponsiveView { layoutProperties in
-                            HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
-                        }) {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .font(.title)
-                                .foregroundColor(Color.accentColor)
-                        }
-                    } else {
-                        NavigationLink(destination: ResponsiveView { layoutProperties in
-                            CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
-                        }) {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .font(.title)
-                                .foregroundColor(Color.accentColor)
-                        }
+                    NavigationLink(destination: ResponsiveView { layoutProperties in
+                        HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
+                    }) {
+                        Image(systemName: "house.fill")
+                            .font(.title)
+                            .foregroundColor(Color.darkAccent)
                     }
                 }
             }
@@ -200,7 +209,7 @@ struct WorkPeriodList: View {
                 .listRowSeparator(.hidden)
                 .padding(.vertical, 5)
                 .padding(.horizontal, 15)
-                .background(Color(red: 196/255, green: 217/255, blue: 220/255))
+                .background(Color.lightAccent)
                 .cornerRadius(10)
                 .padding(.bottom, 10)
             }
@@ -225,7 +234,7 @@ struct TimerEntry {
 struct TimerEntry_Previews: PreviewProvider {
     static var previews: some View {
         ResponsiveView { layoutProperties in
-            TimerEntryView(cuetimer: false, layoutProperties: layoutProperties).environmentObject(Entries())
+            TimerEntryView(cuetimer: true, layoutProperties: layoutProperties).environmentObject(Entries())
         }
         
     }

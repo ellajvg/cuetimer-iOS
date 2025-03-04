@@ -7,29 +7,27 @@
 
 import SwiftUI
 
-@Observable
-class TimerWorkout {
+class TimerWorkout: ObservableObject {
+    @ObservedObject var cueWorkout: CueWorkout
     let cuetimer: Bool
-    let cueWorkout: CueWorkout
     let timerEntry: TimerEntry
-    var timerSegments: [TimerSegment] = [TimerSegment(length: 5, work: false)]
+    var timerSegments: [TimerSegment] = [TimerSegment(length: 5, work: false, index: 0)]
     
     var curr: Int = 0
     var total: Int { cueWorkout.total }
     var length: Int { timerSegments[curr].length }
-    var timerColor: Color { timerSegments[curr].work ? Color.accentColor : Color.accentColor.opacity(0.4) }
     
-    init(cuetimer: Bool, timerEntry: TimerEntry, cueWorkout: CueWorkout) {
+    init(cueWorkout: CueWorkout, cuetimer: Bool, timerEntry: TimerEntry) {
+        self.cueWorkout = cueWorkout
         self.cuetimer = cuetimer
         self.timerEntry = timerEntry
-        self.cueWorkout = cueWorkout
     }
     
-    var endOfSegment: Bool = false
+    @Published var timeElapsed = 0
+    @Published var endOfSegment: Bool = false
+    @Published var isTimerRunning = false
     var startLast: Bool = true
     var timer: Timer? = nil
-    var timeElapsed = 0
-    var isTimerRunning = false
     var remainingTime: Int {
         length-timeElapsed
     }
@@ -57,8 +55,11 @@ class TimerWorkout {
                 timeElapsed += 1
             } else if remainingTime == 1 && !(curr + 1 < timerSegments.count) {
                 timeElapsed += 1
+                cueWorkout.setCurr(newCurr: total)
             } else {
-                endOfSegment = true
+                if curr + 1 < timerSegments.count {
+                    endOfSegment = true
+                }
                 goToNextTimer()
             }
         }
@@ -71,36 +72,48 @@ class TimerWorkout {
     
     func goToPreviousTimer() {
         stopTimer()
-        if curr - 1 >= 0 {
+        if curr == 0 {
             timeElapsed = 0
-            if !(curr == timerSegments.count - 1 && startLast) {
+            startTimer()
+        } else if totalRemainingTime == 0 {
+            startLast = true
+            timeElapsed = 0
+            startTimer()
+            if cuetimer {
+                cueWorkout.setCurr(newCurr: timerSegments[curr].index)
+            }
+            startLast = false
+        } else if curr > 0 {
+            timeElapsed = 0
+            if !startLast {
                 curr -= 1
+                startLast = true
             } else {
                 startLast = false;
             }
             startTimer()
-            if cuetimer && timerSegments[curr].work {
-                cueWorkout.goToPreviousExercise()
+            if cuetimer {
+                cueWorkout.setCurr(newCurr: timerSegments[curr].index)
             }
         }
     }
     
     func goToNextTimer() {
         stopTimer()
-        startLast = true
-            
-        if curr + 1 < timerSegments.count {
-            endOfSegment = true
+        if curr + 1 == timerSegments.count {
+            timeElapsed = length
+            cueWorkout.setCurr(newCurr: total)
+        } else if curr + 1 < timerSegments.count {
             curr += 1
             timeElapsed = 0
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
                 self.endOfSegment = false
             }
             
             startTimer()
                     
-            if cuetimer && timerSegments[curr].work {
-                cueWorkout.goToNextExercise()
+            if cuetimer {
+                cueWorkout.setCurr(newCurr: timerSegments[curr].index)
             }
         }
     }
@@ -112,56 +125,49 @@ class TimerWorkout {
         let repeats = timerEntry.repeats
         
         var round = 0
-        var workPeriodCounter = 0
+        var workPeriodCounter = 1
         
-        while cuetimer ? workPeriodCounter <= total : round < repeats {
+        while cuetimer ? workPeriodCounter < total: round < repeats {
             var period = 0
-            while period < workPeriods.count && (cuetimer ? workPeriodCounter <= total : true) {
-                timerSegments.append(TimerSegment(length: workPeriods[period], work: true))
+            while period < workPeriods.count && (cuetimer ? workPeriodCounter < total: true) {
+                timerSegments.append(TimerSegment(length: workPeriods[period], work: true, index: cuetimer ? workPeriodCounter : round + 1))
                 workPeriodCounter += 1
-                if periodRest > 0 && (cuetimer ? workPeriodCounter < total : period+1 < workPeriods.count) {
-                    timerSegments.append(TimerSegment(length: periodRest, work: false))
-                }
                 period += 1
+                if periodRest > 0 && period < workPeriods.count && (cuetimer ? workPeriodCounter < total: true) {
+                    timerSegments.append(TimerSegment(length: periodRest, work: false, index: cuetimer ? workPeriodCounter - 1 : round + 1))
+                }
             }
-            if cuetimer ? workPeriodCounter < total : round+1 < repeats {
+            if cuetimer ? workPeriodCounter < total: round + 1 < repeats {
                 if roundRest > 0 {
-                    timerSegments.append(TimerSegment(length: roundRest, work: false))
+                    timerSegments.append(TimerSegment(length: roundRest, work: false, index: cuetimer ? workPeriodCounter - 1 : round + 1))
                 } else if periodRest > 0 {
-                    timerSegments.append(TimerSegment(length: periodRest, work: false))
+                    timerSegments.append(TimerSegment(length: periodRest, work: false, index: cuetimer ? workPeriodCounter - 1 : round + 1))
                 }
             }
             period = 0
-            print("round + \(round)")
-            print("repeats + \(repeats)")
             round += 1
         }
-        
-        print(timerSegments)
     }
     
     var previousButtonDisabled: Bool {
-        guard curr > 0 else {return true}
-        return false
+        curr <= 0 && remainingTime == length
     }
     
     var nextButtonDisabled: Bool {
-        guard curr < timerSegments.count - 1 else {return true}
-        return false
+        curr >= timerSegments.count - 1 && remainingTime == 0
     }
     
     var playButtonDisabled: Bool {
-        guard remainingTime > 0, !isTimerRunning else {return true}
-        return false
+        remainingTime <= 0  || isTimerRunning
     }
     
     var pauseButtonDisabled: Bool {
-        guard remainingTime > 0, isTimerRunning else {return true}
-        return false
+        remainingTime <= 0 || !isTimerRunning
     }
 }
 
 struct TimerSegment {
     var length: Int
     var work: Bool
+    var index: Int
 }

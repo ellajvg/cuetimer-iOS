@@ -32,36 +32,36 @@ struct HomepageView: View {
                             Image(systemName: "person.fill")
                             Spacer()
                         }
-                        .font(.system(size: layoutProperties.customFontSize.large))
+                        .font(.system(size: layoutProperties.customFontSize.large * 1.4))
                         .padding(.horizontal, 20)
-                        .foregroundColor(Color.accentColor)
+                        .foregroundColor(Color.darkAccent)
                         Spacer()
                         VStack {
+                            NavigationLink("CueTimer", destination:
+                                CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
+                            )
+                            .boxStyle(
+                                foregroundStyle: .white,
+                                background: Color.darkAccent,
+                                shadowColor: Color(red: 50/256, green: 50/256, blue: 50/256)
+                            )
+                            .padding(.bottom, 30)
                             NavigationLink("Timer", destination:
                                             TimerEntryView(cuetimer: false, layoutProperties: layoutProperties)
                             )
                             .boxStyle(
-                                foregroundStyle: .white,
-                                background: Color.accentColor,
-                                shadowColor: .black
+                                foregroundStyle: .black,
+                                background: .white,
+                                shadowColor: Color(red: 75/256, green: 75/256, blue: 75/256)
                             )
                             .padding(.bottom, 30)
                             NavigationLink("Exercise cues", destination: 
                                 CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
                             )
                             .boxStyle(
-                                foregroundStyle: .white,
-                                background: Color.accentColor,
-                                shadowColor: .black
-                            )
-                            .padding(.bottom, 30)
-                            NavigationLink("CueTimer", destination:
-                                CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
-                            )
-                            .boxStyle(
                                 foregroundStyle: .black,
                                 background: .white,
-                                shadowColor: .black
+                                shadowColor: Color(red: 75/256, green: 75/256, blue: 75/256)
                             )
                             .padding(.bottom, 30)
                         }
@@ -75,8 +75,7 @@ struct HomepageView: View {
                             .ignoresSafeArea()
                             .offset(y:layoutProperties.customDimensValue.large)
                             .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                    )
-                    
+                    )  
                 }
                 Image("Logo3")
                     .resizable()
@@ -86,11 +85,11 @@ struct HomepageView: View {
                     .onAppear {
                         if !animationCompleted {
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                withAnimation(.easeOut(duration: 2)) {
-                                    logoScale = 0.644
-                                    logoOffsetY = -UIScreen.main.bounds.height / 2.984
+                                withAnimation(.easeOut(duration: 1.5)) {
+                                    logoScale = 0.8
+                                    logoOffsetY = -UIScreen.main.bounds.height / 3.6
                                 }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                                     goToHomepage = true
                                     animationCompleted = true
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -99,8 +98,8 @@ struct HomepageView: View {
                                 }
                             }
                         } else {
-                            logoScale = 0.644
-                            logoOffsetY = -UIScreen.main.bounds.height / 2.984
+                            logoScale = 0.8
+                            logoOffsetY = -UIScreen.main.bounds.height / 3.6
                         }
                     }
             }

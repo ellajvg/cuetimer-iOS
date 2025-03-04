@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		91052DEA2D71674C005E19B1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91052DE92D71674C005E19B1 /* GoogleService-Info.plist */; };
+		91052DED2D716C51005E19B1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 91052DEC2D716C51005E19B1 /* FirebaseAnalytics */; };
+		91052DEF2D716C51005E19B1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 91052DEE2D716C51005E19B1 /* FirebaseAuth */; };
 		9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9123AB012D61651800E026E0 /* TimerWorkout.swift */; };
 		9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */; };
 		9146D9C22D4203EF00009FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C12D4203EF00009FE9 /* Assets.xcassets */; };
@@ -15,6 +18,7 @@
 		9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E92D4406E300009FE9 /* HomepageView.swift */; };
 		9146D9EC2D482B0200009FE9 /* CueEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9EB2D482B0100009FE9 /* CueEntryView.swift */; };
 		9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */; };
+		916719792D7289AE0030916E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916719782D7289AE0030916E /* LoginView.swift */; };
 		916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C24162D5D69F30015D4AB /* CueWorkout.swift */; };
 		916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C241A2D5F1C7C0015D4AB /* Entries.swift */; };
 		91853D892D4D7E4400E619D3 /* CueWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */; };
@@ -23,6 +27,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		91052DE92D71674C005E19B1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9123AB012D61651800E026E0 /* TimerWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerWorkout.swift; sourceTree = "<group>"; };
 		9146D9BA2D4203ED00009FE9 /* CueTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerApp.swift; sourceTree = "<group>"; };
@@ -32,6 +37,7 @@
 		9146D9E92D4406E300009FE9 /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
 		9146D9EB2D482B0100009FE9 /* CueEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueEntryView.swift; sourceTree = "<group>"; };
 		9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEntryView.swift; sourceTree = "<group>"; };
+		916719782D7289AE0030916E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		916C24162D5D69F30015D4AB /* CueWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkout.swift; sourceTree = "<group>"; };
 		916C241A2D5F1C7C0015D4AB /* Entries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entries.swift; sourceTree = "<group>"; };
 		91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkoutView.swift; sourceTree = "<group>"; };
@@ -44,6 +50,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91052DED2D716C51005E19B1 /* FirebaseAnalytics in Frameworks */,
+				91052DEF2D716C51005E19B1 /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */,
+				916719782D7289AE0030916E /* LoginView.swift */,
 				9146D9E92D4406E300009FE9 /* HomepageView.swift */,
 				918E329A2D5A97D9006828EB /* ResponsiveView.swift */,
 				9146D9EB2D482B0100009FE9 /* CueEntryView.swift */,
@@ -81,6 +90,7 @@
 				9123AB012D61651800E026E0 /* TimerWorkout.swift */,
 				9146D9E52D42CC0500009FE9 /* BoxStyle.swift */,
 				9146D9C12D4203EF00009FE9 /* Assets.xcassets */,
+				91052DE92D71674C005E19B1 /* GoogleService-Info.plist */,
 				9146D9C32D4203EF00009FE9 /* Preview Content */,
 			);
 			path = CueTimer;
@@ -110,6 +120,10 @@
 			dependencies = (
 			);
 			name = CueTimer;
+			packageProductDependencies = (
+				91052DEC2D716C51005E19B1 /* FirebaseAnalytics */,
+				91052DEE2D716C51005E19B1 /* FirebaseAuth */,
+			);
 			productName = CueTimer;
 			productReference = 9146D9BA2D4203ED00009FE9 /* CueTimer.app */;
 			productType = "com.apple.product-type.application";
@@ -138,6 +152,9 @@
 				Base,
 			);
 			mainGroup = 9146D9B12D4203ED00009FE9;
+			packageReferences = (
+				91052DEB2D716C50005E19B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = 9146D9BB2D4203ED00009FE9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -154,6 +171,7 @@
 			files = (
 				9146D9C52D4203EF00009FE9 /* Preview Assets.xcassets in Resources */,
 				9146D9C22D4203EF00009FE9 /* Assets.xcassets in Resources */,
+				91052DEA2D71674C005E19B1 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -170,6 +188,7 @@
 				9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */,
 				916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */,
 				9146D9E62D42CC0500009FE9 /* BoxStyle.swift in Sources */,
+				916719792D7289AE0030916E /* LoginView.swift in Sources */,
 				916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */,
 				9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */,
 				9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */,
@@ -378,6 +397,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		91052DEB2D716C50005E19B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		91052DEC2D716C51005E19B1 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91052DEB2D716C50005E19B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		91052DEE2D716C51005E19B1 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 91052DEB2D716C50005E19B1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9146D9B22D4203ED00009FE9 /* Project object */;
 }
