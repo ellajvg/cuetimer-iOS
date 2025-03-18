@@ -6,24 +6,24 @@
 //
 
 import SwiftUI
-
+//TO DO: SAVE WORKOUT FUNCTION
 struct CueEntryView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var entries: Entries
     @FocusState private var showKeyboard: Bool
-    @State private var newExercise = CueEntry()
-    @State private var exerciseToDelete: IndexSet?
+    @State private var newExercise: CueEntry = CueEntry()
     
-    @State private var showEmptyAlert = false
-    @State private var showNonEmptyAlert = false
-    @State private var showExitAlert = false
-    @State private var navigateToNextStep = false
-    @State private var navigateToHomepage = false
+    @State private var showEmptyAlert: Bool = false
+    @State private var showNonEmptyAlert: Bool = false
+    @State private var showExitAlert: Bool = false
+    @State private var showSaveAlert: Bool = false
+    @State private var showCueInfo: Bool = false
+    @State private var navigateToNextStep: Bool = false
+    @State private var navigateToHomepage: Bool = false
     
-    private var dark: Color { showEmptyAlert || showNonEmptyAlert || showExitAlert ? Color(red: 110/256, green: 110/256, blue: 110/256) : Color.darkAccent
-    }
+    private var dark: Color { showEmptyAlert || showNonEmptyAlert || showExitAlert ? Color(red: 80/256, green: 80/256, blue: 80/256) : themeManager.theme.darkColor }
     
-    private var light: Color { showEmptyAlert || showNonEmptyAlert || showExitAlert ? Color(red: 210/256, green: 210/256, blue: 210/256) : Color.lightAccent
-    }
+    private var light: Color { showEmptyAlert || showNonEmptyAlert || showExitAlert ? Color(red: 232/256, green: 232/256, blue: 232/256) : themeManager.theme.lightColor }
     
     let cuetimer: Bool
     let layoutProperties: LayoutProperties
@@ -33,8 +33,7 @@ struct CueEntryView: View {
             ZStack {
                 VStack {
                     Text("Exercises")
-                        .fontWeight(.bold)
-                        .foregroundStyle(dark)
+                        .fontWeight(.semibold)
                         .padding(.top, 10)
                         .font(.system(size: layoutProperties.customFontSize.large))
                     
@@ -45,8 +44,7 @@ struct CueEntryView: View {
                             .background(light)
                             .cornerRadius(10)
                             .padding(.top, 4)
-                            .padding(.leading, 20)
-                            .padding(.trailing, 20)
+                            .padding(.horizontal, 20)
                             .font(.system(size: layoutProperties.customFontSize.small))
                     }
                     
@@ -104,9 +102,6 @@ struct CueEntryView: View {
                                         }
                                         .tint(.white)
                                     }
-                                   
-                                
-                                
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -134,9 +129,8 @@ struct CueEntryView: View {
                         }
                     }
 
-                    
                     VStack(spacing: 20) {
-                        ExerciseRow(entry: $newExercise, showKeyboard: $showKeyboard, layoutProperties: layoutProperties)
+                        ExerciseRow(showKeyboard: $showKeyboard, entry: $newExercise, layoutProperties: layoutProperties)
                             .boxStyle(
                                 foregroundStyle: .black,
                                 background: .white,
@@ -144,59 +138,51 @@ struct CueEntryView: View {
                             )
                         
                         HStack(spacing: 20) {
-                            Button("Add exercise") {
+                            let buttonText: String = cuetimer ? "Edit timer" : "Start workout"
+                            Button {
                                 if !newExercise.exercise.isEmpty {
                                     entries.cueEntries.append(newExercise)
                                     newExercise = CueEntry()
                                     showKeyboard = false
                                 }
+                            } label: {
+                                Text("Add exercise")
+                                    .boxStyle(
+                                        foregroundStyle: newExercise.exercise.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .gray : .black,
+                                        background: .white,
+                                        shadowColor: .gray
+                                    )
                             }
-                            .disabled(newExercise.exercise.isEmpty)
+                            .growingButton()
+                            .disabled(newExercise.exercise.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             .font(.system(size: layoutProperties.customFontSize.small))
-                            .boxStyle(
-                                foregroundStyle: newExercise.exercise.isEmpty ? .gray : .black,
-                                background: .white,
-                                shadowColor: .gray
-                            )
                             
-                            VStack {
-                                let buttonText: String = cuetimer ? "Edit timer" : "Start workout"
+                            Button {
                                 if entries.cueEntries.count == 0 {
-                                    Button (buttonText) {
-                                        showEmptyAlert = true
-                                    }
+                                    showEmptyAlert = true
                                 } else if !newExercise.exercise.isEmpty {
-                                    Button (buttonText) {
-                                        showNonEmptyAlert = true
-                                    }
-                                } else if !cuetimer {
-                                    NavigationLink("Start workout", destination: CueWorkoutView(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, layoutProperties: layoutProperties))
+                                    showNonEmptyAlert = true
                                 } else {
-                                    NavigationLink("Edit timer", destination: TimerEntryView(cuetimer: true, layoutProperties: layoutProperties))
+                                    showSaveAlert = true
                                 }
+                            } label: {
+                                Text(buttonText)
+                                    .boxStyle(
+                                        foregroundStyle: .white,
+                                        background: dark,
+                                        shadowColor: .gray
+                                    )
                             }
-                            .font(.system(size: layoutProperties.customFontSize.small))
-                            .boxStyle(
-                                foregroundStyle: .white,
-                                background: dark,
-                                shadowColor: .gray
-                            )
-                            .navigationDestination(isPresented: $navigateToNextStep) {
-                                if !cuetimer {
-                                    CueWorkoutView(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, layoutProperties: layoutProperties)
-                                } else {
-                                    TimerEntryView(cuetimer: true, layoutProperties: layoutProperties)
-                                }
-                            }
+                            .growingButton()
                         }
+                        .font(.system(size: layoutProperties.customFontSize.small))
                     }
-
                     .padding()
                 }
                 .overlay(showEmptyAlert || showNonEmptyAlert || showExitAlert ? .gray.opacity(0.3) : .gray.opacity(0.0))
                 .blur(radius: showEmptyAlert || showNonEmptyAlert || showExitAlert ? 0.6 : 0.0)
                 .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button {
                             if entries.cueEntries.count != 0 {
                                 showExitAlert = true
@@ -210,14 +196,50 @@ struct CueEntryView: View {
                                 .blur(radius: showEmptyAlert || showNonEmptyAlert || showExitAlert ? 1.0 : 0.0)
                         }
                         .navigationDestination(isPresented: $navigateToHomepage) {
-                            HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
+                            HomepageView(layoutProperties: layoutProperties)
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showCueInfo = true
+                        } label: {
+                            Image(systemName: "info.circle.fill")
+                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
+                                .foregroundColor(dark)
+                                .blur(radius: showEmptyAlert || showNonEmptyAlert || showExitAlert ? 1.0 : 0.0)
                         }
                     }
                 }
+                .popover(isPresented: $showCueInfo, content: {
+                    CueInfoView(layoutProperties: layoutProperties)
+                })
                 
-                if showEmptyAlert || showNonEmptyAlert || showExitAlert {
-                    let alertTitle = showEmptyAlert ? "No exercises added" : showNonEmptyAlert ? "Unadded exercise" : "Entries will be lost"
-                    let alertText = showEmptyAlert ? "Please add at least one exercise!" : showNonEmptyAlert ? "Would you like to proceed without it?" : "Would you like to save this workout?"
+                if showEmptyAlert || showNonEmptyAlert || showExitAlert || showSaveAlert {
+                    var alertTitle: String {
+                        if showEmptyAlert {
+                            return "No exercises added"
+                        } else if showNonEmptyAlert {
+                            return "Unadded exercise"
+                        } else if showExitAlert {
+                            return "Entries will be lost"
+                        } else {
+                            return "Save workout"
+                        }
+                    }
+
+                    var alertText: String {
+                        if showEmptyAlert {
+                            return "Please add at least one exercise!"
+                        } else if showNonEmptyAlert {
+                            return "Would you like to proceed without it?"
+                        } else if showExitAlert {
+                            return "Do you still want to exit this workout?"
+                        } else {
+                            return "Would you like to save this workout?"
+                        }
+                    }
+                
                     VStack(spacing: 0) {
                         Text(alertTitle)
                             .font(.system(size: layoutProperties.customFontSize.small * 1.1))
@@ -229,11 +251,12 @@ struct CueEntryView: View {
                             .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                             .padding(.top, 5)
                             .padding(.bottom, 15)
+                            .padding(.horizontal, 15)
+                            .multilineTextAlignment(.center)
                         
                         Divider()
                             .frame(maxWidth: .infinity)
                             .frame(height: 0.3)
-                            .background(Color.gray.opacity(0.1))
                        
                         VStack {
                             if !showEmptyAlert {
@@ -241,12 +264,14 @@ struct CueEntryView: View {
                                     Button("No") {
                                         if showNonEmptyAlert {
                                             showNonEmptyAlert = false
-                                        } else {
+                                        } else if showExitAlert {
                                             showExitAlert = false
                                             navigateToHomepage = true
+                                        } else {
+                                            navigateToNextStep = true
                                         }
                                     }
-                                    .fontWeight(.semibold)
+                                    .fontWeight(showSaveAlert ? .regular : .semibold)
                                     .frame(maxWidth: .infinity)
                                     .padding(10)
                                     Divider()
@@ -256,12 +281,15 @@ struct CueEntryView: View {
                                         if showNonEmptyAlert {
                                             showNonEmptyAlert = false
                                             navigateToNextStep = true
-                                        } else {
+                                        } else if showExitAlert {
                                             showExitAlert = false
                                             navigateToHomepage = true
-                                            //save workout
+                                        } else {
+                                            //save workout, somehow link it, maybe add name field in entry
+                                            navigateToNextStep = true
                                         }
                                     }
+                                    .fontWeight(showSaveAlert ? .semibold : .regular)
                                     .frame(maxWidth: .infinity)
                                     .padding(10)
                                 }
@@ -274,7 +302,7 @@ struct CueEntryView: View {
                             }
                             
                         }
-                        .foregroundStyle(Color.darkAccent)
+                        .foregroundStyle(themeManager.theme.darkColor)
                         .font(.system(size: layoutProperties.customFontSize.small * 1.1))
                     }
                     .frame(maxWidth: .infinity)
@@ -286,17 +314,24 @@ struct CueEntryView: View {
                     .padding(.bottom, 60)
                 }
             }
+            .navigationDestination(isPresented: $navigateToNextStep) {
+                if !cuetimer {
+                    CueWorkoutView(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, layoutProperties: layoutProperties)
+                } else {
+                    TimerEntryView(cuetimer: true, layoutProperties: layoutProperties)
+                }
+            }
             .navigationBarBackButtonHidden(true)
         }
     }
     
-    func moveItemUp(from index: Int) {
+    private func moveItemUp(from index: Int) {
         if !(entries.cueEntries.count == 1 || index == 0) {
             entries.cueEntries.swapAt(index, index - 1)
         }
     }
     
-    func moveItemDown(from index: Int) {
+    private func moveItemDown(from index: Int) {
         if !(entries.cueEntries.count == 1 || index == entries.cueEntries.count - 1) {
             entries.cueEntries.swapAt(index, index + 1)
         }
@@ -313,8 +348,9 @@ struct CueEntryView: View {
 
 
 struct ExerciseRow: View {
-    @Binding var entry: CueEntry
+    @EnvironmentObject var themeManager: ThemeManager
     @FocusState.Binding var showKeyboard: Bool
+    @Binding var entry: CueEntry
     
     let layoutProperties: LayoutProperties
     
@@ -361,7 +397,7 @@ struct ExerciseRow: View {
                     Text("R/L?")
 
                     Toggle("", isOn: $entry.rightLeft)
-                        .toggleStyle(SwitchToggleStyle(tint: .accentColor))
+                        .toggleStyle(SwitchToggleStyle(tint: themeManager.theme.darkColor))
                         .labelsHidden()
                         .frame(width: 65, alignment: .leading)
                 }
@@ -380,8 +416,10 @@ struct CueEntry {
 
 struct CueEntry_Previews: PreviewProvider {
     static var previews: some View {
-        ResponsiveView { layoutProperties in
-            CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
+        ResponsiveLayout { layoutProperties in
+            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
+                .environmentObject(AuthManager())
+                .environmentObject(ThemeManager())
                 .environmentObject(Entries())
         }
     }

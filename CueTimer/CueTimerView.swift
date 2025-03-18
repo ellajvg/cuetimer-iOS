@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct CueTimerView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var entries: Entries
     @ObservedObject var timerWorkout: TimerWorkout
     
-    @State private var showExitAlert = false
-    @State private var showEditAlert = false
-    @State private var navigateToHomepage = false
-    @State private var navigateToTimerEntry = false
+    @State private var showExitAlert: Bool = false
+    @State private var showEditAlert: Bool = false
+    @State private var navigateToHomepage: Bool = false
+    @State private var navigateToTimerEntry: Bool = false
     
-    private var dark: Color { showEditAlert || showExitAlert ? Color(red: 110/256, green: 110/256, blue: 110/256) : Color.darkAccent
-    }
+    private var dark: Color { showEditAlert || showExitAlert ? Color(red: 80/256, green: 80/256, blue: 80/256) : themeManager.theme.darkColor }
     
-    private var light: Color { showEditAlert || showExitAlert ? Color(red: 210/256, green: 210/256, blue: 210/256) : Color.lightAccent
-    }
+    private var light: Color { showEditAlert || showExitAlert ? Color(red: 232/256, green: 232/256, blue: 232/256) : themeManager.theme.lightColor }
     
     let cuetimer: Bool
     let layoutProperties: LayoutProperties
@@ -211,11 +210,6 @@ struct CueTimerView: View {
                                 .foregroundColor(dark)
                                 .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
                         }
-                        .navigationDestination(isPresented: $navigateToHomepage) {
-                            ResponsiveView { layoutProperties in
-                                HomepageView(animationCompleted: true, layoutProperties: layoutProperties)
-                            }
-                        }
                     }
                     
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -229,7 +223,7 @@ struct CueTimerView: View {
                                 .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
                         }
                         .navigationDestination(isPresented: $navigateToTimerEntry) {
-                            ResponsiveView { layoutProperties in
+                            ResponsiveLayout { layoutProperties in
                                 TimerEntryView(cuetimer: cuetimer, layoutProperties: layoutProperties)
                             }
                             
@@ -251,7 +245,8 @@ struct CueTimerView: View {
                             .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                             .padding(.top, 5)
                             .padding(.bottom, 15)
-                        
+                            .padding(.horizontal, 15)
+                            .multilineTextAlignment(.center)
                         
                         Divider()
                             .frame(maxWidth: .infinity)
@@ -282,7 +277,7 @@ struct CueTimerView: View {
                             .frame(maxWidth: .infinity)
                             .padding(10)
                         }
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(themeManager.theme.darkColor)
                         .font(.system(size: layoutProperties.customFontSize.small * 1.1))
                     }
                     .frame(maxWidth: .infinity)
@@ -292,6 +287,11 @@ struct CueTimerView: View {
                     .shadow(color: .gray, radius: 5, y: 5)
                     .padding(.horizontal, 50)
                     .padding(.bottom, 60)
+                }
+            }
+            .navigationDestination(isPresented: $navigateToHomepage) {
+                ResponsiveLayout { layoutProperties in
+                    HomepageView(layoutProperties: layoutProperties)
                 }
             }
         }
@@ -328,8 +328,11 @@ struct CueTimerWorkout_Previews: PreviewProvider {
         
         let entries = Entries()
     
-        ResponsiveView { layoutProperties in
-            CueTimerView(timerWorkout: TimerWorkout(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, timerEntry: entries.timerEntry), cuetimer: false, layoutProperties: layoutProperties).environmentObject(entries)
+        ResponsiveLayout { layoutProperties in
+            CueTimerView(timerWorkout: TimerWorkout(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, timerEntry: entries.timerEntry), cuetimer: false, layoutProperties: layoutProperties)
+                .environmentObject(AuthManager())
+                .environmentObject(ThemeManager())
+                .environmentObject(entries)
         }
     }
 }

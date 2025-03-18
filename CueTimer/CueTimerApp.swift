@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
-import FirebaseCore
+import Firebase
+import FirebaseAuth
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
+      FirebaseApp.configure()
     return true
   }
 }
@@ -18,17 +19,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct CueTimerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authManager = AuthManager()
+    @StateObject var themeManager = ThemeManager()
     @StateObject var entries = Entries()
-    
-    init() {
-        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(Color(red: 2/255, green: 128/255, blue: 146/255))
-    }
     
     var body: some Scene {
         WindowGroup {
-            ResponsiveView { layoutProperties in
-                HomepageView(animationCompleted: false, layoutProperties: layoutProperties)
+            ResponsiveLayout { layoutProperties in
+                LoginView(layoutProperties: layoutProperties)
+                    .environmentObject(authManager)
+                    .environmentObject(themeManager)
                     .environmentObject(entries)
+                    .onAppear {
+                        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(themeManager.theme.darkColor)
+                    }
             }
         }
     }

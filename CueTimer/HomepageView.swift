@@ -6,103 +6,130 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct HomepageView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var entries: Entries
     @State private var logoScale: CGFloat = 1.0
     @State private var logoOffsetY: CGFloat = 0.0
-    @State private var goToHomepage: Bool = false
-    @State private var showAnimation: Bool
-    @State private var animationCompleted: Bool
+    @State private var showPopover: Bool = false
+    @State private var showDeletePopover: Bool = false
     
+    @State var showAnimation: Bool
     let layoutProperties: LayoutProperties
-
-    init(animationCompleted: Bool, layoutProperties: LayoutProperties) {
-        self._showAnimation = State(initialValue: !animationCompleted)
-        self._animationCompleted = State(initialValue: animationCompleted)
+    
+    init(showAnimation: Bool = false, layoutProperties: LayoutProperties) {
+        self.showAnimation = showAnimation
         self.layoutProperties = layoutProperties
     }
-
+    
     var body: some View {
         NavigationStack {
             ZStack {
-                if !showAnimation {
-                    VStack {
-                        HStack {
-                            Image(systemName: "person.fill")
-                            Spacer()
-                        }
-                        .font(.system(size: layoutProperties.customFontSize.large * 1.4))
-                        .padding(.horizontal, 20)
-                        .foregroundColor(Color.darkAccent)
-                        Spacer()
+                ZStack {
+                    if !showAnimation {
                         VStack {
-                            NavigationLink("CueTimer", destination:
-                                CueEntryView(cuetimer: true, layoutProperties: layoutProperties)
-                            )
-                            .boxStyle(
-                                foregroundStyle: .white,
-                                background: Color.darkAccent,
-                                shadowColor: Color(red: 50/256, green: 50/256, blue: 50/256)
-                            )
+                            Spacer()
+                            NavigationLink(destination:
+                                            CueEntryView(cuetimer: true, layoutProperties: layoutProperties)) {
+                                Text("CueTimer")
+                                    .boxStyle(
+                                        foregroundStyle: .white,
+                                        background: themeManager.theme.darkColor,
+                                        shadowColor: .gray
+                                    )
+                            }
+                            .growingButton()
                             .padding(.bottom, 30)
-                            NavigationLink("Timer", destination:
-                                            TimerEntryView(cuetimer: false, layoutProperties: layoutProperties)
-                            )
-                            .boxStyle(
-                                foregroundStyle: .black,
-                                background: .white,
-                                shadowColor: Color(red: 75/256, green: 75/256, blue: 75/256)
-                            )
+                            NavigationLink(destination:
+                                            TimerEntryView(cuetimer: false, layoutProperties: layoutProperties)) {
+                                Text("Timer")
+                                    .boxStyle(
+                                        foregroundStyle: .black,
+                                        background: .white,
+                                        shadowColor: .gray
+                                    )
+                            }
+                            .growingButton()
                             .padding(.bottom, 30)
-                            NavigationLink("Exercise cues", destination: 
-                                CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
-                            )
-                            .boxStyle(
-                                foregroundStyle: .black,
-                                background: .white,
-                                shadowColor: Color(red: 75/256, green: 75/256, blue: 75/256)
-                            )
+                            NavigationLink(destination:
+                                            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)) {
+                                Text("Exercise cues")
+                                    .boxStyle(
+                                        foregroundStyle: .black,
+                                        background: .white,
+                                        shadowColor: .gray
+                                    )
+                            }
+                            .growingButton()
                             .padding(.bottom, 30)
                         }
                         .font(.system(size: layoutProperties.customFontSize.smallMedium))
                         .padding(.horizontal, 80)
-                        .padding(.bottom, 30)
-                    }
-                    .background(
-                        Image("Background")
-                            .resizable()
+                        .background(
+                            VStack {
+                                Spacer()
+                                Circle()
+                                    .fill(themeManager.theme.lightColor)
+                                    .scaleEffect(2.3)
+                                    .offset(y: layoutProperties.customDimensValue.large)
+                            }
                             .ignoresSafeArea()
-                            .offset(y:layoutProperties.customDimensValue.large)
-                            .aspectRatio(contentMode: /*@START_MENU_TOKEN@*/.fill/*@END_MENU_TOKEN@*/)
-                    )  
-                }
-                Image("Logo3")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .offset(y: logoOffsetY)
-                    .scaleEffect(logoScale)
-                    .onAppear {
-                        if !animationCompleted {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                withAnimation(.easeOut(duration: 1.5)) {
-                                    logoScale = 0.8
-                                    logoOffsetY = -UIScreen.main.bounds.height / 3.6
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                                    goToHomepage = true
-                                    animationCompleted = true
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        )
+                        .transition(AnyTransition.move(edge: .bottom))
+                    }
+                    
+                    Image("Logo\(themeManager.theme.themeName)")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .offset(y: showAnimation ? logoOffsetY : -UIScreen.main.bounds.height / 3.6)
+                        .scaleEffect(showAnimation ? logoScale : 0.8)
+                        .onAppear {
+                            if showAnimation {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    withAnimation(.easeOut(duration: 0.5)) {
+                                        logoScale = 0.8
+                                        logoOffsetY = -UIScreen.main.bounds.height / 3.6
                                         showAnimation = false
                                     }
                                 }
                             }
-                        } else {
-                            logoScale = 0.8
-                            logoOffsetY = -UIScreen.main.bounds.height / 3.6
+                        }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showPopover = true
+                        } label: {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: layoutProperties.customFontSize.mediumLarge * 1.1))
+                                .foregroundColor(themeManager.theme.darkColor)
                         }
                     }
+                }
             }
+            .popover(isPresented: $showPopover) {
+                TabView {
+                    SavedView(layoutProperties: layoutProperties)
+                        .tabItem {
+                            Label("Saved", systemImage: "bookmark")
+                        }
+                       
+                    HistoryView(layoutProperties: layoutProperties)
+                        .tabItem {
+                            Label("History", systemImage: "book")
+                        }
+                    
+                    SettingsView(layoutProperties: layoutProperties)
+                        .tabItem {
+                            Label("Settings", systemImage: "gear")
+                        }
+                }
+                .tint(themeManager.theme.darkColor)
+                .font(.system(size: layoutProperties.customFontSize.small))
+            }
+            
         }
         .onAppear {
             entries.reset()
@@ -113,10 +140,12 @@ struct HomepageView: View {
 
 struct HomepageView_Previews: PreviewProvider {
     static var previews: some View {
-        ResponsiveView { layoutProperties in
-            HomepageView(animationCompleted: false, layoutProperties: layoutProperties)
+        ResponsiveLayout { layoutProperties in
+            HomepageView(showAnimation: true, layoutProperties: layoutProperties)
+                .environmentObject(AuthManager())
+                .environmentObject(ThemeManager())
+                .environmentObject(Entries())
         }
-        .environmentObject(Entries())
     }
 }
 

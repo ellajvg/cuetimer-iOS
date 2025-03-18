@@ -19,7 +19,7 @@ struct BoxStyle: ViewModifier {
             .padding()
             .background(background)
             .cornerRadius(10)
-            .shadow(color: shadowColor, radius: 5, y: 5)
+            .shadow(color: shadowColor, radius: 4, y: 4)
     }
 }
 

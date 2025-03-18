@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ResponsiveView<Content: View>: View {
+struct ResponsiveLayout<Content: View>: View {
     var content:(LayoutProperties) -> Content
     var body: some View {
         GeometryReader {geo in
@@ -74,7 +74,7 @@ struct CustomDimensValue {
             smallMedium = 100
             medium = 100
             mediumLarge = 200
-            large = 450
+            large = 900
             extraLarge = 650
         } else {
             extraSmall = 20
@@ -82,7 +82,7 @@ struct CustomDimensValue {
             smallMedium = 40
             medium = 66
             mediumLarge = 90
-            large = 220
+            large = 260
             extraLarge = 450
         }
     }
