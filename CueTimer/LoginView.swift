@@ -11,76 +11,42 @@ struct LoginView: View {
     @EnvironmentObject var authManager: AuthManager
     @EnvironmentObject var themeManager: ThemeManager
     @FocusState private var showKeyboard: Bool
-    @State var signUp: Bool = true
-    @State private var progress: CGFloat = 0.0
-    @State private var logoScale: CGFloat = 1.0
-    @State private var logoOffsetY: CGFloat = 0.0
-    @State private var showAnimation: Bool = true
+    @State private var signUp: Bool = false
+    @State var showAnimation: Bool
     
-    let layoutProperties: LayoutProperties
-    
-    private var dark: Color { authManager.showVerifyAlert || authManager.showResetAlert || authManager.showResetEntry ? Color(red: 80/256, green: 80/256, blue: 80/256) : Color.darkAccent
+    private var dark: Color { authManager.showVerifyAlert || authManager.showResetAlert ? Color(red: 80/256, green: 80/256, blue: 80/256) : Color.darkAccent
     }
     
     var body: some View {
-        if authManager.hasCurrentUser() {
-            HomepageView(layoutProperties: layoutProperties)
-                .onAppear {
-                    if let userId = authManager.getCurrentUserId() {
-                        themeManager.fetchTheme(userId: userId)
-                    }
-                }
-         } else {
-            content
-        }
-    }
-    
-    var content: some View {
         NavigationStack {
             ZStack {
-                Image(authManager.showVerifyAlert || authManager.showResetAlert || authManager.showResetEntry ? "LogoGray" : "LogoTeal")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .offset(y: logoOffsetY)
-                    .scaleEffect(showKeyboard ? 0 : logoScale)
-                    .animation(.easeInOut(duration: 0.2), value: showKeyboard)
-                    .onAppear {
-                        if showAnimation {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                withAnimation(.easeOut(duration: 0.5)) {
-                                    logoScale = 0.8
-                                    logoOffsetY = -UIScreen.main.bounds.height / 3.6
-                                    showAnimation = false
-                                }
-                            }
-                        } else {
-                            logoScale = 0.8
-                            logoOffsetY = -UIScreen.main.bounds.height / 3.6
-                        }
-                    }
+                LogoAnimation(showAnimation: $showAnimation)
+                    .scaleEffect(showKeyboard || authManager.showResetPopover ? 0 : 1.0)
+                    .animation(.easeInOut(duration: 0.3), value: showKeyboard)
+                    .animation(.easeInOut(duration: 0.3), value: authManager.showResetPopover)
                 
                 if !showAnimation {
                     VStack(spacing: 20) {
                         Spacer()
                         VStack(alignment: .leading) {
                             Text("Welcome CueTi!")
-                                .font(.system(size: layoutProperties.customFontSize.smallMedium * 1.2))
+                                .font(.title2)
                                 .fontWeight(.semibold)
                                 .frame(maxWidth: .infinity, alignment: .center)
                                 .padding(.top, 5)
                                 .padding(.bottom, 10)
                             
                             Text("Email")
-                                .font(.system(size: layoutProperties.customFontSize.small))
                                 .padding(.bottom, -5)
                             
                             TextField("", text: $authManager.email)
                                 .textFieldStyle(RoundedBorderTextFieldStyle())
-                                .padding(.bottom, 15)
+                                .padding(.bottom, 10)
                                 .textInputAutocapitalization(.never)
                                 .focused($showKeyboard)
                                 .onChange(of: authManager.email) { oldValue, newValue in
                                     authManager.showDefaultError = false
+                                    authManager.email = newValue.filter { !$0.isWhitespace }
                                     if authManager.showEmailError && oldValue != newValue {
                                         authManager.showEmailError = false
                                     }
@@ -88,14 +54,13 @@ struct LoginView: View {
                             
                             if authManager.showEmailError {
                                 Text(authManager.emailErrorText)
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                    .font(.callout)
                                     .foregroundStyle(Color.darkAccent)
                                     .padding(.top, -15)
                                     .padding(.bottom, 5)
                             }
                             
                             Text("Password")
-                                .font(.system(size: layoutProperties.customFontSize.small))
                                 .padding(.bottom, -5)
                             
                             SecureField("", text: $authManager.password)
@@ -106,6 +71,7 @@ struct LoginView: View {
                                 .textInputAutocapitalization(.never)
                                 .focused($showKeyboard)
                                 .onChange(of: authManager.password) { oldValue, newValue in
+                                    authManager.password = newValue.filter { !$0.isWhitespace }
                                     if signUp {
                                         authManager.showDefaultError = false
                                         if !newValue.isEmpty && newValue.count < 6 {
@@ -124,7 +90,7 @@ struct LoginView: View {
                             
                             if authManager.showLengthError {
                                 Text("Password must be at least 6 characters.")
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                    .font(.callout)
                                     .foregroundStyle(dark)
                                     .padding(.top, -15)
                                     .padding(.bottom, 5)
@@ -132,7 +98,6 @@ struct LoginView: View {
                             
                             if signUp {
                                 Text("Confirm password")
-                                    .font(.system(size: layoutProperties.customFontSize.small))
                                     .padding(.bottom, -5)
                                 SecureField("", text: $authManager.confirmPassword)
                                     .textContentType(.oneTimeCode)
@@ -142,6 +107,7 @@ struct LoginView: View {
                                     .textInputAutocapitalization(.never)
                                     .focused($showKeyboard)
                                     .onChange(of: authManager.confirmPassword) { oldValue, newValue in
+                                        authManager.confirmPassword = newValue.filter { !$0.isWhitespace }
                                         authManager.showDefaultError = false
                                         if !newValue.isEmpty && newValue != authManager.password {
                                             authManager.showMatchError = true
@@ -151,7 +117,7 @@ struct LoginView: View {
                                     }
                                 if authManager.showMatchError {
                                     Text("Passwords do not match.")
-                                        .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                        .font(.callout)
                                         .foregroundStyle(dark)
                                         .padding(.top, -15)
                                         .padding(.bottom, 5)
@@ -162,10 +128,9 @@ struct LoginView: View {
                                 HStack {
                                     Spacer()
                                     Text(authManager.defaultErrorText)
-                                        .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                                         .foregroundStyle(dark)
-                                        .padding(.bottom, signUp ? 5 : 0)
-                                        .multilineTextAlignment(.center)
+                                        .padding(.bottom, signUp ? 5 : 1)
+                                        .multilineTextAlignment(signUp ? .center : .trailing)
                                     if signUp {
                                         Spacer()
                                     }
@@ -176,9 +141,9 @@ struct LoginView: View {
                                 HStack {
                                     Spacer()
                                     Button("Forgot password?") {
-                                        authManager.showResetEntry = true
+                                        authManager.clearFields()
+                                        authManager.showResetPopover = true
                                     }
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                                     .fontWeight(authManager.showDefaultError ? .semibold : .regular)
                                     .foregroundStyle(dark)
                                     .padding(.bottom, 5)
@@ -186,16 +151,13 @@ struct LoginView: View {
                             }
                         }
                         .boxStyle(foregroundStyle: .black, background: .white, shadowColor: .gray)
-                        .font(.system(size: layoutProperties.customFontSize.small))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         
                         
                         HStack(spacing: 20) {
-                            Button("Login") {
+                            Button {
                                 if signUp {
-                                    authManager.email = ""
-                                    authManager.password = ""
-                                    authManager.confirmPassword = ""
+                                    authManager.clearFields()
                                     showKeyboard = false
                                     signUp = false
                                 } else {
@@ -207,10 +169,12 @@ struct LoginView: View {
                                         authManager.login()
                                     }
                                 }
+                            } label: {
+                                Text("Login")
+                                    .boxStyle(foregroundStyle: signUp ? .black : .white, background: signUp ? .white : dark, shadowColor: .gray)
                             }
-                            .boxStyle(foregroundStyle: signUp ? .black : .white, background: signUp ? .white : dark, shadowColor: .gray)
-                            
-                            Button("Sign up") {
+                            .growingButton()
+                            Button {
                                 if signUp && !(authManager.showLengthError || authManager.showMatchError || authManager.showEmailError) {
                                     if authManager.email.isEmpty || authManager.password.isEmpty || authManager.confirmPassword.isEmpty {
                                         authManager.defaultErrorText = "All fields are required."
@@ -220,86 +184,30 @@ struct LoginView: View {
                                         authManager.register()
                                     }
                                 } else {
-                                    authManager.email = ""
-                                    authManager.password = ""
-                                    authManager.confirmPassword = ""
+                                    authManager.clearFields()
                                     showKeyboard = false
                                     signUp = true
                                 }
+                            } label: {
+                                Text("Sign up")
+                                    .boxStyle(foregroundStyle: signUp ? .white : .black, background: signUp ? dark : .white, shadowColor: .gray)
                             }
-                            .boxStyle(foregroundStyle: signUp ? .white : .black, background: signUp ? dark : .white, shadowColor: .gray)
+                            .growingButton()
                         }
-                        .font(.system(size: layoutProperties.customFontSize.small))
                     }
                     .padding()
                     .transition(AnyTransition.move(edge: .bottom))
-                    .overlay(authManager.showVerifyAlert || authManager.showResetAlert || authManager.showResetEntry ? .gray.opacity(0.3) : .gray.opacity(0.0))
-                    .blur(radius: authManager.showVerifyAlert || authManager.showResetAlert || authManager.showResetEntry ? 0.6 : 0.0)
-                }
-                
-                if authManager.showResetEntry {
-                    VStack(spacing: 0) {
-                        Text("Enter your email")
-                            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
-                            .fontWeight(.semibold)
-                            .padding(.top, 20)
-                            .padding(.horizontal, 10)
-                        
-                        Text("Please enter the email address associated with your account.")
-                            .font(.system(size: layoutProperties.customFontSize.small * 0.9))
-                            .padding(.top, 5)
-                            .padding(.bottom, 15)
-                            .padding(.horizontal, 15)
-                            .multilineTextAlignment(.center)
-                        
-                        TextField("", text: $authManager.resetEmail)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal, 15)
-                            .padding(.bottom, 20)
-                            .textInputAutocapitalization(.never)
-                        
-                        Divider()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 0.3)
-                            .background(Color.gray.opacity(0.1))
-                        
-                        HStack(spacing: 0) {
-                            Button("Close") {
-                                authManager.showResetEntry = false
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(10)
-                            Divider()
-                                .frame(height: 40)
-                                .background(Color.gray.opacity(0.01))
-                            Button("Send") {
-                                authManager.showResetEntry = false
-                                authManager.showResetAlert = true
-                                authManager.sendResetEmail(firstSend: true)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .fontWeight(.semibold)
-                            .padding(10)
-                        }
-                        .foregroundStyle(Color.darkAccent)
-                        .font(.system(size: layoutProperties.customFontSize.small * 1.1))
-                    }
-                    .frame(maxWidth: .infinity)
-                    .foregroundStyle(.black)
-                    .background(.white)
-                    .cornerRadius(10)
-                    .shadow(color: .gray, radius: 5, y: 5)
-                    .padding(.horizontal, 50)
-                    .padding(.top, 60)
+                    .overlay(authManager.showVerifyAlert || authManager.showResetAlert ? .gray.opacity(0.3) : .gray.opacity(0.0))
+                    .blur(radius: authManager.showVerifyAlert || authManager.showResetAlert ? 0.6 : 0.0)
                 }
                 
                 if authManager.showVerifyAlert || authManager.showResetAlert {
                     let alertTitle = "Check your inbox!"
-                    let alertText = authManager.showVerifyAlert ? "We've sent you a verification email. Please click the link inside to verify your email. The screen will update automatically once verified." : "If an account exists with this email, you will receive a link to reset your password."
+                    let alertText = authManager.showVerifyAlert ? "We've sent you an email. Please click the link inside to verify your email. The screen will update automatically once verified." : "If an account exists with this email, you will receive a link to reset your password."
                     
                         VStack(spacing: 0) {
                             Text(alertTitle)
-                                .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                                .font(.title3)
                                 .fontWeight(.semibold)
                                 .padding(.top, 20)
                                 .padding(.horizontal, 10)
@@ -314,23 +222,22 @@ struct LoginView: View {
                                     .foregroundStyle(Color.darkAccent)
                                     .fontWeight(.semibold)
                                 }
-                                .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                .font(.body)
                                 .padding(.top, 10)
                                 .padding(.bottom, 17.5)
                                 .padding(.horizontal, 15)
                                 .multilineTextAlignment(.center)
                             } else {
                                 Text(alertText)
-                                .font(.system(size: layoutProperties.customFontSize.small * 0.9))
-                                .padding(.top, 5)
-                                .padding(.bottom, 15)
-                                .padding(.horizontal, 15)
-                                .multilineTextAlignment(.center)
+                                    .padding(.top, 5)
+                                    .padding(.bottom, 15)
+                                    .padding(.horizontal, 15)
+                                    .multilineTextAlignment(.center)
                             }
                             
                             if authManager.resent {
                                 Text("Email has been resent!")
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                    .font(.callout)
                                     .foregroundStyle(Color.darkAccent)
                                     .padding(.top, -10)
                                     .padding(.bottom, 10)
@@ -338,7 +245,7 @@ struct LoginView: View {
                                     .multilineTextAlignment(.center)
                             } else if authManager.showVerifyAlert && !authManager.verifyErrorText.isEmpty {
                                 Text(authManager.verifyErrorText)
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                    .font(.callout)
                                     .foregroundStyle(Color.darkAccent)
                                     .padding(.top, -10)
                                     .padding(.bottom, 10)
@@ -346,7 +253,7 @@ struct LoginView: View {
                                     .multilineTextAlignment(.center)
                             } else if authManager.showResetAlert && !authManager.resetErrorText.isEmpty {
                                 Text(authManager.resetErrorText)
-                                    .font(.system(size: layoutProperties.customFontSize.small * 0.9))
+                                    .font(.callout)
                                     .foregroundStyle(Color.darkAccent)
                                     .padding(.top, -10)
                                     .padding(.bottom, 10)
@@ -373,16 +280,15 @@ struct LoginView: View {
                                     if authManager.showVerifyAlert {
                                         authManager.sendVerificationEmail(firstSend: false)
                                     } else {
-                                        authManager.sendResetEmail(firstSend: false)
+                                        authManager.sendResetEmail(firstSend: false) { success in }
                                     }
                                 }
                                 .frame(maxWidth: .infinity)
                                 .fontWeight(.semibold)
                                 .padding(10)
-                                .disabled(authManager.showVerifyTimeout)
                             }
-                            .foregroundStyle(authManager.showVerifyTimeout ? dark : Color.darkAccent)
-                            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                            .foregroundStyle(Color.darkAccent)
+                            .font(.title3)
                         }
                         .frame(maxWidth: .infinity)
                         .foregroundStyle(.black)
@@ -392,32 +298,18 @@ struct LoginView: View {
                         .padding(.horizontal, 50)
                 }
             }
-            .navigationDestination(isPresented: $authManager.isVerified) {
-                VerificationView(layoutProperties: layoutProperties)
-            }
-            .navigationDestination(isPresented: $authManager.goToHomepage) {
-                HomepageView(layoutProperties: layoutProperties)
-                    .onAppear {
-                        if let userId = authManager.getCurrentUserId() {
-                            themeManager.fetchTheme(userId: userId)
-                        }
-                    }
-            }
         }
         .navigationBarBackButtonHidden(true)
     }
 }
 
-
-
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        ResponsiveLayout { layoutProperties in
-            LoginView(layoutProperties: layoutProperties)
-                .environmentObject(AuthManager())
-                .environmentObject(ThemeManager())
-                .environmentObject(Entries())
-        }
+        LoginView(showAnimation: true)
+            .environmentObject(DataManager())
+            .environmentObject(AuthManager())
+            .environmentObject(ThemeManager())
+            .environmentObject(WorkoutManager())
     }
 }
 

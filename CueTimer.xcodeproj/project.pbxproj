@@ -9,8 +9,11 @@
 /* Begin PBXBuildFile section */
 		91052DED2D716C51005E19B1 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 91052DEC2D716C51005E19B1 /* FirebaseAnalytics */; };
 		91052DEF2D716C51005E19B1 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 91052DEE2D716C51005E19B1 /* FirebaseAuth */; };
-		9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9123AB012D61651800E026E0 /* TimerWorkout.swift */; };
-		9130721A2D79285C00590537 /* VerificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913072192D79285C00590537 /* VerificationView.swift */; };
+		9108BD322DA605F900A870CB /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9108BD312DA605F900A870CB /* SoundManager.swift */; };
+		910DDDA92D966995003018D5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 910DDDA82D966995003018D5 /* ContentView.swift */; };
+		912C81412D951A9D00A69FAE /* SavedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 912C81402D951A9D00A69FAE /* SavedView.swift */; };
+		913275572DA6DC720074737B /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913275562DA6DC720074737B /* WorkoutManager.swift */; };
+		9138DF542D95C099009D61AE /* SaveWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9138DF532D95C099009D61AE /* SaveWorkoutView.swift */; };
 		9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */; };
 		9146D9C22D4203EF00009FE9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C12D4203EF00009FE9 /* Assets.xcassets */; };
 		9146D9C52D4203EF00009FE9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9146D9C42D4203EF00009FE9 /* Preview Assets.xcassets */; };
@@ -18,29 +21,34 @@
 		9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9E92D4406E300009FE9 /* HomepageView.swift */; };
 		9146D9EC2D482B0200009FE9 /* CueEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9EB2D482B0100009FE9 /* CueEntryView.swift */; };
 		9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */; };
-		91583F462D8388CA00989EEB /* LogoCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91583F452D8388CA00989EEB /* LogoCreator.swift */; };
+		91583F462D8388CA00989EEB /* LogoAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91583F452D8388CA00989EEB /* LogoAnimation.swift */; };
 		91663B892D81D55B00F84545 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91663B882D81D55B00F84545 /* SettingsView.swift */; };
 		91663B8B2D82033400F84545 /* TimerInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91663B8A2D82033400F84545 /* TimerInfoView.swift */; };
 		91663B8D2D82035100F84545 /* CueInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91663B8C2D82035100F84545 /* CueInfoView.swift */; };
 		91663B912D8243E200F84545 /* GrowingButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91663B902D8243E200F84545 /* GrowingButtonStyle.swift */; };
 		916719792D7289AE0030916E /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916719782D7289AE0030916E /* LoginView.swift */; };
-		916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C24162D5D69F30015D4AB /* CueWorkout.swift */; };
-		916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 916C241A2D5F1C7C0015D4AB /* Entries.swift */; };
 		917D0F522D827B4D004D32EE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 917D0F512D827B4D004D32EE /* GoogleService-Info.plist */; };
+		9180C50A2D8D2937008321EE /* AuthFieldsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9180C5092D8D2937008321EE /* AuthFieldsView.swift */; };
 		918188312D826C350015231E /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918188302D826C350015231E /* ThemeManager.swift */; };
 		918188332D826E7E0015231E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 918188322D826E7E0015231E /* FirebaseFirestore */; };
 		91853D892D4D7E4400E619D3 /* CueWorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */; };
 		91853D8B2D4D7E6C00E619D3 /* CueTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */; };
-		918E329B2D5A97D9006828EB /* ResponsiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918E329A2D5A97D9006828EB /* ResponsiveLayout.swift */; };
+		918DDE942D9B688200953377 /* ChangeNameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918DDE932D9B688200953377 /* ChangeNameView.swift */; };
+		918DDE962D9C909100953377 /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918DDE952D9C909000953377 /* ResetPasswordView.swift */; };
 		919782882D80862E00E5AFB9 /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 919782872D80862E00E5AFB9 /* DataManager.swift */; };
 		9197828E2D80ED1100E5AFB9 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9197828D2D80ED1100E5AFB9 /* AuthManager.swift */; };
-		91E2D4152D81D1F900FE6CE3 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E2D4142D81D1F900FE6CE3 /* HistoryView.swift */; };
-		91E2D4172D81D21F00FE6CE3 /* SavedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E2D4162D81D21F00FE6CE3 /* SavedView.swift */; };
+		91E6B16A2D8D1482002866BB /* ChangeEmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E6B1692D8D1482002866BB /* ChangeEmailView.swift */; };
+		91E6B16C2D8D1493002866BB /* ChangePasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E6B16B2D8D1493002866BB /* ChangePasswordView.swift */; };
+		91E6B16E2D8D14A2002866BB /* DeleteAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91E6B16D2D8D14A2002866BB /* DeleteAccountView.swift */; };
+		91EDEA6F2D928B8A00A250DF /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91EDEA6E2D928B8A00A250DF /* AccountView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9123AB012D61651800E026E0 /* TimerWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerWorkout.swift; sourceTree = "<group>"; };
-		913072192D79285C00590537 /* VerificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationView.swift; sourceTree = "<group>"; };
+		9108BD312DA605F900A870CB /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		910DDDA82D966995003018D5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		912C81402D951A9D00A69FAE /* SavedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedView.swift; sourceTree = "<group>"; };
+		913275562DA6DC720074737B /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
+		9138DF532D95C099009D61AE /* SaveWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveWorkoutView.swift; sourceTree = "<group>"; };
 		9146D9BA2D4203ED00009FE9 /* CueTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CueTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerApp.swift; sourceTree = "<group>"; };
 		9146D9C12D4203EF00009FE9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,23 +57,25 @@
 		9146D9E92D4406E300009FE9 /* HomepageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomepageView.swift; sourceTree = "<group>"; };
 		9146D9EB2D482B0100009FE9 /* CueEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueEntryView.swift; sourceTree = "<group>"; };
 		9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerEntryView.swift; sourceTree = "<group>"; };
-		91583F452D8388CA00989EEB /* LogoCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoCreator.swift; sourceTree = "<group>"; };
+		91583F452D8388CA00989EEB /* LogoAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoAnimation.swift; sourceTree = "<group>"; };
 		91663B882D81D55B00F84545 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		91663B8A2D82033400F84545 /* TimerInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerInfoView.swift; sourceTree = "<group>"; };
 		91663B8C2D82035100F84545 /* CueInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueInfoView.swift; sourceTree = "<group>"; };
 		91663B902D8243E200F84545 /* GrowingButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrowingButtonStyle.swift; sourceTree = "<group>"; };
 		916719782D7289AE0030916E /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		916C24162D5D69F30015D4AB /* CueWorkout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkout.swift; sourceTree = "<group>"; };
-		916C241A2D5F1C7C0015D4AB /* Entries.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entries.swift; sourceTree = "<group>"; };
 		917D0F512D827B4D004D32EE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9180C5092D8D2937008321EE /* AuthFieldsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFieldsView.swift; sourceTree = "<group>"; };
 		918188302D826C350015231E /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueWorkoutView.swift; sourceTree = "<group>"; };
 		91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CueTimerView.swift; sourceTree = "<group>"; };
-		918E329A2D5A97D9006828EB /* ResponsiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponsiveLayout.swift; sourceTree = "<group>"; };
+		918DDE932D9B688200953377 /* ChangeNameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeNameView.swift; sourceTree = "<group>"; };
+		918DDE952D9C909000953377 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		919782872D80862E00E5AFB9 /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		9197828D2D80ED1100E5AFB9 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
-		91E2D4142D81D1F900FE6CE3 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
-		91E2D4162D81D21F00FE6CE3 /* SavedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedView.swift; sourceTree = "<group>"; };
+		91E6B1692D8D1482002866BB /* ChangeEmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeEmailView.swift; sourceTree = "<group>"; };
+		91E6B16B2D8D1493002866BB /* ChangePasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangePasswordView.swift; sourceTree = "<group>"; };
+		91E6B16D2D8D14A2002866BB /* DeleteAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteAccountView.swift; sourceTree = "<group>"; };
+		91EDEA6E2D928B8A00A250DF /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,28 +112,33 @@
 			isa = PBXGroup;
 			children = (
 				9146D9BD2D4203ED00009FE9 /* CueTimerApp.swift */,
+				910DDDA82D966995003018D5 /* ContentView.swift */,
 				916719782D7289AE0030916E /* LoginView.swift */,
-				913072192D79285C00590537 /* VerificationView.swift */,
+				918DDE952D9C909000953377 /* ResetPasswordView.swift */,
 				9146D9E92D4406E300009FE9 /* HomepageView.swift */,
-				91E2D4162D81D21F00FE6CE3 /* SavedView.swift */,
-				91E2D4142D81D1F900FE6CE3 /* HistoryView.swift */,
+				91EDEA6E2D928B8A00A250DF /* AccountView.swift */,
+				912C81402D951A9D00A69FAE /* SavedView.swift */,
 				91663B882D81D55B00F84545 /* SettingsView.swift */,
+				91E6B1692D8D1482002866BB /* ChangeEmailView.swift */,
+				91E6B16B2D8D1493002866BB /* ChangePasswordView.swift */,
+				91E6B16D2D8D14A2002866BB /* DeleteAccountView.swift */,
+				9180C5092D8D2937008321EE /* AuthFieldsView.swift */,
 				9146D9EB2D482B0100009FE9 /* CueEntryView.swift */,
 				91663B8C2D82035100F84545 /* CueInfoView.swift */,
 				9146D9ED2D482B1E00009FE9 /* TimerEntryView.swift */,
 				91663B8A2D82033400F84545 /* TimerInfoView.swift */,
+				9138DF532D95C099009D61AE /* SaveWorkoutView.swift */,
+				918DDE932D9B688200953377 /* ChangeNameView.swift */,
 				91853D882D4D7E4400E619D3 /* CueWorkoutView.swift */,
 				91853D8A2D4D7E6C00E619D3 /* CueTimerView.swift */,
-				916C241A2D5F1C7C0015D4AB /* Entries.swift */,
-				916C24162D5D69F30015D4AB /* CueWorkout.swift */,
-				9123AB012D61651800E026E0 /* TimerWorkout.swift */,
+				913275562DA6DC720074737B /* WorkoutManager.swift */,
 				919782872D80862E00E5AFB9 /* DataManager.swift */,
 				9197828D2D80ED1100E5AFB9 /* AuthManager.swift */,
 				918188302D826C350015231E /* ThemeManager.swift */,
-				918E329A2D5A97D9006828EB /* ResponsiveLayout.swift */,
+				9108BD312DA605F900A870CB /* SoundManager.swift */,
 				9146D9E52D42CC0500009FE9 /* BoxStyle.swift */,
 				91663B902D8243E200F84545 /* GrowingButtonStyle.swift */,
-				91583F452D8388CA00989EEB /* LogoCreator.swift */,
+				91583F452D8388CA00989EEB /* LogoAnimation.swift */,
 				9146D9C12D4203EF00009FE9 /* Assets.xcassets */,
 				917D0F512D827B4D004D32EE /* GoogleService-Info.plist */,
 				9146D9C32D4203EF00009FE9 /* Preview Content */,
@@ -219,26 +234,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				9146D9EC2D482B0200009FE9 /* CueEntryView.swift in Sources */,
+				918DDE942D9B688200953377 /* ChangeNameView.swift in Sources */,
 				91663B912D8243E200F84545 /* GrowingButtonStyle.swift in Sources */,
-				9130721A2D79285C00590537 /* VerificationView.swift in Sources */,
+				91E6B16A2D8D1482002866BB /* ChangeEmailView.swift in Sources */,
+				91EDEA6F2D928B8A00A250DF /* AccountView.swift in Sources */,
+				91E6B16E2D8D14A2002866BB /* DeleteAccountView.swift in Sources */,
 				91663B8B2D82033400F84545 /* TimerInfoView.swift in Sources */,
 				91853D892D4D7E4400E619D3 /* CueWorkoutView.swift in Sources */,
 				91663B892D81D55B00F84545 /* SettingsView.swift in Sources */,
-				91583F462D8388CA00989EEB /* LogoCreator.swift in Sources */,
+				91583F462D8388CA00989EEB /* LogoAnimation.swift in Sources */,
 				919782882D80862E00E5AFB9 /* DataManager.swift in Sources */,
 				9197828E2D80ED1100E5AFB9 /* AuthManager.swift in Sources */,
-				918E329B2D5A97D9006828EB /* ResponsiveLayout.swift in Sources */,
 				9146D9EE2D482B1E00009FE9 /* TimerEntryView.swift in Sources */,
-				916C24172D5D69F30015D4AB /* CueWorkout.swift in Sources */,
 				9146D9E62D42CC0500009FE9 /* BoxStyle.swift in Sources */,
+				9138DF542D95C099009D61AE /* SaveWorkoutView.swift in Sources */,
+				913275572DA6DC720074737B /* WorkoutManager.swift in Sources */,
 				916719792D7289AE0030916E /* LoginView.swift in Sources */,
 				91663B8D2D82035100F84545 /* CueInfoView.swift in Sources */,
-				91E2D4172D81D21F00FE6CE3 /* SavedView.swift in Sources */,
-				916C241B2D5F1C7C0015D4AB /* Entries.swift in Sources */,
+				9108BD322DA605F900A870CB /* SoundManager.swift in Sources */,
+				9180C50A2D8D2937008321EE /* AuthFieldsView.swift in Sources */,
 				9146D9EA2D4406E300009FE9 /* HomepageView.swift in Sources */,
-				9123AB022D61651800E026E0 /* TimerWorkout.swift in Sources */,
+				91E6B16C2D8D1493002866BB /* ChangePasswordView.swift in Sources */,
 				91853D8B2D4D7E6C00E619D3 /* CueTimerView.swift in Sources */,
-				91E2D4152D81D1F900FE6CE3 /* HistoryView.swift in Sources */,
+				912C81412D951A9D00A69FAE /* SavedView.swift in Sources */,
+				910DDDA92D966995003018D5 /* ContentView.swift in Sources */,
+				918DDE962D9C909100953377 /* ResetPasswordView.swift in Sources */,
 				9146D9BE2D4203ED00009FE9 /* CueTimerApp.swift in Sources */,
 				918188312D826C350015231E /* ThemeManager.swift in Sources */,
 			);
@@ -360,6 +380,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
@@ -388,9 +409,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ellajvg.CueTimer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -416,9 +441,13 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ellajvg.CueTimer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

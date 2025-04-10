@@ -19,21 +19,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 @main
 struct CueTimerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var dataManager = DataManager()
     @StateObject var authManager = AuthManager()
     @StateObject var themeManager = ThemeManager()
-    @StateObject var entries = Entries()
+    @StateObject var workoutManager = WorkoutManager()
+    @StateObject var soundManager = SoundManager()
     
     var body: some Scene {
         WindowGroup {
-            ResponsiveLayout { layoutProperties in
-                LoginView(layoutProperties: layoutProperties)
-                    .environmentObject(authManager)
-                    .environmentObject(themeManager)
-                    .environmentObject(entries)
-                    .onAppear {
-                        UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(themeManager.theme.darkColor)
-                    }
-            }
+            ContentView()
+                .preferredColorScheme(.light)
+                .environmentObject(dataManager)
+                .environmentObject(authManager)
+                .environmentObject(themeManager)
+                .environmentObject(workoutManager)
+                .environmentObject(soundManager)
+                .onAppear {
+                    UIView.appearance(whenContainedInInstancesOf: [UIAlertController.self]).tintColor = UIColor(themeManager.theme.darkColor)
+                }
         }
     }
 }

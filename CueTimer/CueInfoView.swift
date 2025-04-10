@@ -8,170 +8,90 @@
 import SwiftUI
 
 struct CueInfoView: View {
-    let layoutProperties: LayoutProperties
+    @EnvironmentObject var themeManager: ThemeManager
+    @Binding var showCueInfo: Bool
+    let cuetimer: Bool
     
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button {
+                    showCueInfo = false
+                } label: {
+                    Image(systemName: "x.circle.fill")
+                        .font(.title)
+                        .foregroundStyle(themeManager.theme.darkColor)
+                }
+            }
+            
             Text("Information")
-                .font(.system(size: layoutProperties.customFontSize.large))
+                .font(.title)
                 .fontWeight(.semibold)
-                .padding(.top, 30)
             
-            VStack {
-                Text("Adding exercises")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fontWeight(.semibold)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                Text("1. Enter a name for your exercise here in the textfield under \"Exercise\"")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                Text("2. REPS: Specify the reps for the exercise. Reps are the number of times do the exercise (i.e., 10 squats is the same as 10 reps of squats).")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 20)
-                
-                VStack {
-                    Text("2. Specify the reps for the exercise. Reps are the number of times do the exercise (i.e., 10 squats is the same as 10 reps of squats).")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Image("ExerciseEntry")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
+            ScrollView {
+                VStack(spacing: 15) {
+                    VStack {
+                        Text("Adding exercises to your workout")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .padding(.top, 5)
+                        Image(cuetimer ? "CueTimerInfo\(themeManager.theme.themeName)" : "CueInfo\(themeManager.theme.themeName)")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                        VStack(spacing: 10) {
+                            Text("**1. Enter a name** for your exercise.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("**2. Choose the number of reps**—the number of times you perform the exercise in a row (e.g., 10 lunges = 10 reps). If you don't want reps to show up in your workout for this exercise, select N/A.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("**3. Choose the number of sets**—groups of reps separated by a break (e.g., 4 sets of 10 lunges = 40 lunges total, 10 at a time).")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("**4. Enable R/L cues for unilateral exercises** (e.g., lunges). When enabled, sets for the exercise are doubled to include separate cues for the right and left sides (e.g., 4 sets with R/L enabled = 8 total sets, 4 per side).")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("**5. Click add exercise** to include it in your workout.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(cuetimer ? "**6. Click edit timer** once you've addded all your exercises." : "**6. Click start workout** once you've addded all your exercises.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if !cuetimer {
+                                Text("**Note: If your workout isn't saved**, a popup will appear with the option to save your workout. Click save or don't save to start to your workout.")
+                            }
+                        }
+                    }
+                    Divider()
+                    
+                    VStack {
+                        Text("Editing your workout")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                        Image("Reorder\(themeManager.theme.themeName)")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                        Text("Swipe right and click on the arrows to change the order of exercises.")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom, 10)
+                        Image("Delete\(themeManager.theme.themeName)")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                        Text("Swipe left and click on the bin to delete an exercise.")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .padding(.bottom, 30)
+                    Spacer()
                 }
-                .padding(.horizontal, 20)
-                
-                VStack {
-                    Text("1. Enter a name for your exercise here: ")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    Image("ExerciseEntry")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                }
-                .padding(.horizontal, 20)
-                
-                Divider()
-                    .frame(height: 0.3)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 20)
-                
-                HStack {
-                    Image(systemName: "speaker.wave.2")
-                        .frame(width: layoutProperties.customFontSize.small * 1.5,  alignment: .leading)
-                        .foregroundStyle(Color.darkAccent)
-                    Text("Volume")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
             }
-            .padding(.bottom, 30)
-            
-            VStack {
-                Text("Editing exercises")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fontWeight(.semibold)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
-                HStack {
-                    Image(systemName: "at")
-                        .frame(width: layoutProperties.customFontSize.small * 1.5,  alignment: .leading)
-                        .foregroundStyle(Color.darkAccent)
-                    Text("Change email")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                Divider()
-                    .frame(height: 0.3)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 20)
-                HStack {
-                    Image(systemName: "key")
-                        .frame(width: layoutProperties.customFontSize.small * 1.5,  alignment: .leading)
-                        .foregroundStyle(Color.darkAccent)
-                    Text("Change password")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                Divider()
-                    .frame(height: 0.3)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 20)
-                HStack {
-                    Image(systemName: "rectangle.portrait.and.arrow.right")
-                        .frame(width: layoutProperties.customFontSize.small * 1.5,  alignment: .leading)
-                        .foregroundStyle(Color.darkAccent)
-                    Text("Logout")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                Divider()
-                    .frame(height: 0.3)
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 20)
-                HStack {
-                    Image(systemName: "trash")
-                        .frame(width: layoutProperties.customFontSize.small * 1.5,  alignment: .leading)
-                        .foregroundStyle(Color.darkAccent)
-                    Text("Delete account")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-            }
-            .padding(.bottom, 30)
-            Spacer()
+            .padding(.horizontal)
+            .scrollIndicators(.hidden)
         }
-        .font(.system(size: layoutProperties.customFontSize.small))
         .padding()
-        
-//        VStack(spacing: 0) {
-//            Text("Swipe left to delete")
-//                .font(.system(size: layoutProperties.customFontSize.small * 1.1))
-//                .fontWeight(.semibold)
-//                .padding(.top, 20)
-//                .padding(.horizontal, 10)
-//            
-//            Image("Delete")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .padding()
-//            
-//            Text("Swipe right to reorder")
-//                .font(.system(size: layoutProperties.customFontSize.small * 1.1))
-//                .fontWeight(.semibold)
-//                .padding(.top, 10)
-//                .padding(.horizontal, 10)
-//            
-//            Image("Reorder")
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .padding()
-//
-//            Divider()
-//                .frame(maxWidth: .infinity)
-//                .frame(height: 0.3)
-//                .background(Color.gray.opacity(0.1))
-//           
-//            Button("Got it!") {
-//                //showCueInfo = false
-//            }
-//            .fontWeight(.semibold)
-//            .padding(15)
-//            .foregroundStyle(Color.darkAccent)
-//            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
-//        }
-//        .frame(maxWidth: .infinity)
-//        .foregroundStyle(.black)
-//        .background(.white)
-//        .cornerRadius(10)
-//        .shadow(color: .gray, radius: 5, y: 5)
-//        .padding(.horizontal, 50)
-//        .padding(.bottom, 60)
     }
 }
 
 struct CueInfoView_Previews: PreviewProvider {
     static var previews: some View {
-        ResponsiveLayout { layoutProperties in
-            CueInfoView(layoutProperties: layoutProperties)
-        }
-        
+        CueInfoView(showCueInfo: .constant(true), cuetimer: false)
+            .environmentObject(DataManager())
+            .environmentObject(AuthManager())
+            .environmentObject(ThemeManager())
+            .environmentObject(WorkoutManager())
     }
 }

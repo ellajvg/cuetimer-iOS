@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct CueWorkoutView: View {
+    @EnvironmentObject var authManager: AuthManager
+    @EnvironmentObject var dataManager: DataManager
     @EnvironmentObject var themeManager: ThemeManager
-    @EnvironmentObject var entries: Entries
-    @ObservedObject var cueWorkout: CueWorkout
+    @EnvironmentObject var workoutManager: WorkoutManager
+    @Environment(\.dismiss) private var dismiss
     
     @State private var showEditAlert: Bool = false
     @State private var showExitAlert: Bool = false
@@ -22,72 +24,102 @@ struct CueWorkoutView: View {
     private var light: Color { showEditAlert || showExitAlert ? Color(red: 232/256, green: 232/256, blue: 232/256) : themeManager.theme.lightColor }
     
     let cuetimer: Bool
-    let layoutProperties: LayoutProperties
     
     var body: some View {
         NavigationStack {
             ZStack {
                 VStack {
+                    HStack {
+                        Button {
+                            if workoutManager.cueCurr < workoutManager.total {
+                                showExitAlert = true
+                            } else {
+                                workoutManager.totalReset()
+                                dismiss()
+                            }
+                        } label: {
+                            Image(systemName: "house.fill")
+                                .font(.title)
+                                .foregroundColor(dark)
+                        }
+                        Spacer()
+                        Button {
+                            showEditAlert = true
+                        } label: {
+                            Image(systemName: "pencil.line")
+                                .font(.title)
+                                .foregroundColor(dark)
+                        }
+                    }
+                    .padding(.horizontal)
+                   
                     Spacer()
+                   
                     ZStack {
                         Circle()
-                            .stroke(lineWidth: layoutProperties.customDimensValue.small)
+                            .stroke(lineWidth: 30)
                             .foregroundStyle(light)
                         Circle()
-                            .trim(from: 0.0, to: CGFloat(cueWorkout.curr) / CGFloat(cueWorkout.total))
+                            .trim(from: 0.0, to: CGFloat(workoutManager.cueCurr) / CGFloat(workoutManager.total))
                             .stroke(dark, style: StrokeStyle(
-                                lineWidth: layoutProperties.customDimensValue.small,
+                                lineWidth: 30,
                                 lineCap: .round,
                                 lineJoin: .miter
                             ))
                             .rotationEffect(.degrees(-90))
                         
-                        Text("\(cueWorkout.curr)/\(cueWorkout.total)")
+                        Text("\(workoutManager.cueCurr)/\(workoutManager.total)")
                             .monospacedDigit()
-                            .font(.system(size: layoutProperties.customFontSize.giant))
+                            .font(.system(size: 100))
                             .foregroundStyle(dark)
                             .bold()
                             .contentTransition(.numericText())
                     }
-                    .padding(.horizontal, layoutProperties.customDimensValue.smallMedium)
-                    .animation(.linear, value: cueWorkout.curr)
+                    .padding(.horizontal, 40)
+                    .animation(.linear, value: workoutManager.cueCurr)
                     
                     VStack(spacing: 15) {
-                        if cueWorkout.curr < cueWorkout.total {
+                        if !workoutManager.cues.isEmpty && workoutManager.cueCurr < workoutManager.total {
                             VStack {
                                 Spacer()
-                                Text(cueWorkout.cues[cueWorkout.curr].exercise)
-                                    .font(.system(size: layoutProperties.customFontSize.medium))
+                                Text(workoutManager.cues[workoutManager.cueCurr].exercise)
+                                    .font(.title)
                                     .multilineTextAlignment(.center)
                                 Spacer()
                                 HStack {
-                                    Text(cueWorkout.cues[cueWorkout.curr].set!)
+                                    Text(workoutManager.cues[workoutManager.cueCurr].set!)
                                     Spacer()
-                                    if cueWorkout.cues[cueWorkout.curr].side != nil {
-                                        Text(cueWorkout.cues[cueWorkout.curr].side!)
+                                    if workoutManager.cues[workoutManager.cueCurr].side != nil {
+                                        Text(workoutManager.cues[workoutManager.cueCurr].side!)
                                         Spacer()
                                     }
-                                    
-                                    Text(cueWorkout.cues[cueWorkout.curr].reps!)
+                                    if workoutManager.cues[workoutManager.cueCurr].reps != "Reps: 0" {
+                                        Text(workoutManager.cues[workoutManager.cueCurr].reps!)
+                                    }
                                 }
-                                .font(.system(size: layoutProperties.customFontSize.small))
                                 
                             }
                             .padding(5)
-                            .frame(height: 110)
+                            .frame(height: 100)
                             .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
                         } else {
                             VStack {
                                 Text("Workout complete!")
-                                    .font(.system(size: layoutProperties.customFontSize.medium))
+                                    .font(.title)
                             }
                             .padding(5)
-                            .frame(height: 110)
+                            .frame(height: 100)
                             .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
+                            .onAppear {
+                                if workoutManager.name != nil {
+                                    if let userId = authManager.getUserId() {
+                                        dataManager.updateLastCompleted(userId: userId, name: workoutManager.name!)
+                                    }
+                                }
+                            }
                         }
                         VStack {
-                            Text(cueWorkout.findNextExercise())
-                                .font(.system(size: layoutProperties.customFontSize.small))
+                            Text(workoutManager.findNextExercise())
                         }
                         .boxStyle(
                             foregroundStyle: .black,
@@ -99,73 +131,39 @@ struct CueWorkoutView: View {
                     Spacer()
                     HStack {
                         Button {
-                            cueWorkout.goToPreviousExercise()
+                            workoutManager.goToPreviousExercise()
                         } label: {
                             Image(systemName: "arrowshape.backward.fill")
                         }
-                        .foregroundStyle(cueWorkout.previousButtonDisabled ? light : dark)
-                        .disabled(cueWorkout.previousButtonDisabled)
+                        .foregroundStyle(workoutManager.previousCueButtonDisabled ? light : dark)
+                        .disabled(workoutManager.previousCueButtonDisabled)
                         Spacer()
                         Button {
-                            cueWorkout.goToNextExercise()
+                            workoutManager.goToNextExercise()
                         } label : {
                             Image(systemName: "arrowshape.forward.fill")
                         }
-                        .foregroundStyle(cueWorkout.endButtonDisabled ?  light : dark)
-                        .disabled(cueWorkout.endButtonDisabled)
+                        .foregroundStyle(workoutManager.endButtonDisabled ?  light : dark)
+                        .disabled(workoutManager.endButtonDisabled)
                     }
                     .padding(.bottom, 10)
                     .padding(.horizontal, 21)
-                    .font(.system(size: layoutProperties.customFontSize.large))
+                    .font(.largeTitle)
                 }
                 .overlay(showEditAlert || showExitAlert ? .gray.opacity(0.3) : .gray.opacity(0.0))
                 .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            if cueWorkout.curr < cueWorkout.total {
-                                showExitAlert = true
-                            } else {
-                                navigateToHomepage = true
-                            }
-                        } label: {
-                            Image(systemName: "house.fill")
-                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
-                                .foregroundColor(dark)
-                                .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
-                        }
-                        .navigationDestination(isPresented: $navigateToHomepage) {
-                            HomepageView(layoutProperties: layoutProperties)
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showEditAlert = true
-                        } label: {
-                            Image(systemName: "pencil.line")
-                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
-                                .foregroundStyle(dark)
-                                .blur(radius: showEditAlert || showExitAlert ? 1.0 : 0.0)
-                        }
-                        .navigationDestination(isPresented: $navigateToCueEntry) {
-                            CueEntryView(cuetimer: false, layoutProperties: layoutProperties)
-                        }
-                    }
-                }
                 
                 if showEditAlert || showExitAlert {
                     let alertTitle = "Progress will be lost"
-                    let alertText = showEditAlert ? "Do you still want to edit this workout?" : "Do you still want to exit this workout?"
+                    let alertText = showEditAlert ? "Still want to edit this workout?" : "Still want to exit this workout?"
                     VStack(spacing: 0) {
                         Text(alertTitle)
-                            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                            .font(.title3)
                             .fontWeight(.semibold)
                             .padding(.top, 20)
                             .padding(.horizontal, 10)
                             
                         Text(alertText)
-                            .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                             .padding(.top, 5)
                             .padding(.bottom, 15)
                             .padding(.horizontal, 15)
@@ -191,17 +189,19 @@ struct CueWorkoutView: View {
                             Button("Yes") {
                                 if showEditAlert {
                                     showEditAlert = false
+                                    workoutManager.partialReset()
                                     navigateToCueEntry = true
                                 } else {
                                     showExitAlert = false
-                                    navigateToHomepage = true
+                                    workoutManager.totalReset()
+                                    dismiss()
                                 }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(10)
                         }
                         .foregroundStyle(themeManager.theme.darkColor)
-                        .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                        .font(.title3)
                     }
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(.black)
@@ -212,29 +212,21 @@ struct CueWorkoutView: View {
                     .padding(.bottom, 60)
                 }
             }
+            .navigationDestination(isPresented: $navigateToCueEntry) {
+                CueEntryView(cuetimer: false)
+            }
         }
         .navigationBarBackButtonHidden(true)
     }
 }
 
-struct ExerciseCue {
-    var exercise: String
-    var reps: String?
-    var set: String?
-    var side: String?
-}
-
 struct CueWorkout_Previews: PreviewProvider {
     static var previews: some View {
-        
-        let entries = Entries()
-    
-        ResponsiveLayout { layoutProperties in
-            CueWorkoutView(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, layoutProperties: layoutProperties)
-                .environmentObject(AuthManager())
-                .environmentObject(ThemeManager())
-                .environmentObject(entries)
-        }
+        CueWorkoutView(cuetimer: false)
+            .environmentObject(DataManager())
+            .environmentObject(AuthManager())
+            .environmentObject(ThemeManager())
+            .environmentObject(WorkoutManager())
     }
 }
 

@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct CueTimerView: View {
+    @EnvironmentObject var authManager: AuthManager
+    @EnvironmentObject var dataManager: DataManager
     @EnvironmentObject var themeManager: ThemeManager
-    @EnvironmentObject var entries: Entries
-    @ObservedObject var timerWorkout: TimerWorkout
-    
+    @EnvironmentObject var workoutManager: WorkoutManager
+    @EnvironmentObject var soundManager: SoundManager
+    @Environment(\.dismiss) private var dismiss
     @State private var showExitAlert: Bool = false
     @State private var showEditAlert: Bool = false
-    @State private var navigateToHomepage: Bool = false
     @State private var navigateToTimerEntry: Bool = false
     
     private var dark: Color { showEditAlert || showExitAlert ? Color(red: 80/256, green: 80/256, blue: 80/256) : themeManager.theme.darkColor }
@@ -22,92 +23,142 @@ struct CueTimerView: View {
     private var light: Color { showEditAlert || showExitAlert ? Color(red: 232/256, green: 232/256, blue: 232/256) : themeManager.theme.lightColor }
     
     let cuetimer: Bool
-    let layoutProperties: LayoutProperties
     
     var body: some View {
         NavigationStack {
             ZStack {
                 VStack {
+                    HStack {
+                        Button {
+                            workoutManager.stopTimer()
+                            if workoutManager.totalRemainingTime == 0 {
+                                workoutManager.totalReset()
+                                dismiss()
+                            } else {
+                                showExitAlert = true
+                            }
+                        } label: {
+                            Image(systemName: "house.fill")
+                                .font(.title)
+                                .foregroundColor(dark)
+                        }
+                        Spacer()
+                        Button {
+                            workoutManager.stopTimer()
+                            showEditAlert = true
+                        } label: {
+                            Image(systemName: "pencil.line")
+                                .font(.title)
+                                .foregroundColor(dark)
+                        }
+                    }
+                    .padding(.horizontal)
+                    
                     Spacer()
+                    
                     ZStack {
                         Circle()
-                            .stroke(lineWidth: layoutProperties.customDimensValue.small)
+                            .stroke(lineWidth: 30)
                             .foregroundStyle(light)
                         Circle()
-                            .trim(from: timerWorkout.endOfSegment ? 1.0 : 0.0, to: timerWorkout.endOfSegment ? 1.0 : timerWorkout.progress)
+                            .trim(from: workoutManager.endOfSegment ? 1.0 : 0.0, to: workoutManager.endOfSegment ? 1.0 : workoutManager.progress)
                             .stroke(getTimerColor(), style: StrokeStyle(
-                                lineWidth: layoutProperties.customDimensValue.small,
+                                lineWidth: 30,
                                 lineCap: .round,
                                 lineJoin: .miter
                             ))
                             .rotationEffect(.degrees(-90))
                         
                         VStack {
-                            Text(displayTime(time: timerWorkout.remainingTime))
+                            Text(displayTime(time: workoutManager.remainingTime))
                                 .monospacedDigit()
-                                .font(.system(size: layoutProperties.customFontSize.giant))
+                                .font(.system(size: 100))
                                 .foregroundStyle(dark)
                                 .bold()
                                 .contentTransition(.numericText())
-                            Text(displayTime(time: timerWorkout.totalRemainingTime))
+                            Text(displayTime(time: workoutManager.totalRemainingTime))
                                 .monospacedDigit()
-                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
+                                .font(.title)
                                 .foregroundStyle(dark)
-                                .animation(.linear(duration: 0.2), value: timerWorkout.totalRemainingTime)
+                                .animation(.linear(duration: 0.2), value: workoutManager.totalRemainingTime)
+                        }
+                        .onChange(of: workoutManager.remainingTime) {
+                            if soundManager.sound {
+                                if workoutManager.remainingTime == 3 {
+                                    soundManager.playSound(name: "Countdown")
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                        soundManager.playSound(name: "Countdown")
+                                    }
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                        soundManager.playSound(name: "Countdown")
+                                    }
+                                } else if workoutManager.timerSegments[workoutManager.timerCurr].work && workoutManager.timeElapsed == 0 {
+                                    soundManager.playSound(name: "Start", shouldDeactivateAfter: true)
+                                } else if (workoutManager.timerCurr != 0 && workoutManager.timeElapsed == 0) || workoutManager.remainingTime == 0 {
+                                    soundManager.playSound(name: "Complete", shouldDeactivateAfter: true)
+                                }
+                            }
                         }
                     }
-                    .padding(.horizontal, layoutProperties.customDimensValue.smallMedium)
-                    .animation(.linear(duration: 1.0), value: timerWorkout.progress)
+                    .padding(.horizontal, 40)
+                    .animation(.linear(duration: 1.0), value: workoutManager.progress)
                     Spacer()
                     VStack(spacing: 15) {
                         if cuetimer {
-                            if timerWorkout.cueWorkout.curr == 0 {
-                                Text(timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].exercise)
-                                    .font(.system(size: layoutProperties.customFontSize.large))
+                            if !workoutManager.cues.isEmpty && workoutManager.cueCurr == 0{
+                                Text(workoutManager.cues[workoutManager.cueCurr].exercise)
+                                    .font(.title)
                                     .multilineTextAlignment(.center)
-                                    .frame(height: 110)
+                                    .frame(height: 100)
                                     .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
-                            } else if !timerWorkout.timerSegments[timerWorkout.curr].work {
+                            } else if !workoutManager.timerSegments[workoutManager.timerCurr].work {
                                 Text("Rest")
-                                    .font(.system(size: layoutProperties.customFontSize.large))
-                                    .padding(.bottom, layoutProperties.customFontSize.small * 1.2)
+                                    .font(.largeTitle)
                                     .multilineTextAlignment(.center)
-                                    .frame(height: 110)
+                                    .frame(height: 100)
                                     .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
-                            } else if timerWorkout.cueWorkout.curr < timerWorkout.cueWorkout.total {
+                            } else if workoutManager.cueCurr < workoutManager.total {
                                 VStack {
                                     Spacer()
-                                    Text(timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].exercise)
-                                        .font(.system(size: layoutProperties.customFontSize.medium))
+                                    Text(workoutManager.cues[workoutManager.cueCurr].exercise)
+                                        .font(.title)
                                         .multilineTextAlignment(.center)
                                     Spacer()
                                     HStack {
-                                        Text(timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].set!)
+                                        Text(workoutManager.cues[workoutManager.cueCurr].set!)
                                         Spacer()
-                                        if timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].side != nil {
-                                            Text(timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].side!)
+                                        if workoutManager.cues[workoutManager.cueCurr].side != nil {
+                                            Text(workoutManager.cues[workoutManager.cueCurr].side!)
                                             Spacer()
                                         }
-                                        
-                                        Text(timerWorkout.cueWorkout.cues[timerWorkout.cueWorkout.curr].reps!)
+                                        if workoutManager.cues[workoutManager.cueCurr].reps != "Reps: 0" {
+                                            Text(workoutManager.cues[workoutManager.cueCurr].reps!)
+                                        }
                                     }
-                                    .font(.system(size: layoutProperties.customFontSize.small))
                                     
                                 }
                                 .padding(5)
-                                .frame(height: 110)
+                                .frame(height: 100)
                                 .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
                             } else {
                                 VStack {
                                     Text("Workout complete!")
-                                        .font(.system(size: layoutProperties.customFontSize.large))
+                                        .font(.title)
                                 }
-                                .frame(height: 110)
+                                .frame(height: 100)
                                 .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
+                                .onAppear {
+                                    if workoutManager.name != nil {
+                                        if let userId = authManager.getUserId() {
+                                            dataManager.updateLastCompleted(userId: userId, name: workoutManager.name!)
+                                        }
+                                    }
+                                }
                             }
                             VStack {
-                                Text(timerWorkout.cueWorkout.findNextExercise())
-                                    .font(.system(size: layoutProperties.customFontSize.small))
+                                Text(workoutManager.findNextExercise())
                             }
                             .boxStyle(
                                 foregroundStyle: .black,
@@ -116,35 +167,40 @@ struct CueTimerView: View {
                             )
                         } else {
                             VStack {
-                                if timerWorkout.curr == 0 {
+                                if workoutManager.timerCurr == 0 {
                                     Text("Get ready!")
-                                        .font(.system(size: layoutProperties.customFontSize.large))
-                                } else if timerWorkout.totalRemainingTime == 0 {
+                                        .font(.title)
+                                } else if workoutManager.totalRemainingTime == 0 {
                                     Text("Workout Complete!")
-                                        .font(.system(size: layoutProperties.customFontSize.large))
-                                } else if timerWorkout.timerSegments[timerWorkout.curr].work {
+                                        .font(.title)
+                                        .onAppear {
+                                            if workoutManager.name != nil {
+                                                if let userId = authManager.getUserId() {
+                                                    dataManager.updateLastCompleted(userId: userId, name: workoutManager.name!)
+                                                }
+                                            }
+                                        }
+                                } else if workoutManager.timerSegments[workoutManager.timerCurr].work {
                                     Text("Work")
-                                        .font(.system(size: layoutProperties.customFontSize.large * 1.2))
-                                } else if !timerWorkout.timerSegments[timerWorkout.curr].work {
+                                        .font(.largeTitle)
+                                } else if !workoutManager.timerSegments[workoutManager.timerCurr].work {
                                     Text("Rest")
-                                        .font(.system(size: layoutProperties.customFontSize.large * 1.2))
+                                        .font(.largeTitle)
                                 }
                             }
                             .multilineTextAlignment(.center)
                             .frame(height: 80)
                             .boxStyle(foregroundStyle: .white, background: dark, shadowColor: .white)
                             
-                            
                             VStack {
-                                if timerWorkout.curr == 0 {
+                                if workoutManager.timerCurr == 0 {
                                     Text("You got this :)")
-                                } else if timerWorkout.totalRemainingTime == 0 {
+                                } else if workoutManager.totalRemainingTime == 0 {
                                     Text("Go flex in the mirror :)")
                                 } else {
-                                    Text("Round \(timerWorkout.timerSegments[timerWorkout.curr].index) of \(entries.timerEntry.repeats)")
+                                    Text("Round \(workoutManager.timerSegments[workoutManager.timerCurr].index) of \(workoutManager.timerEntry.repeats)")
                                 }
                             }
-                            .font(.system(size: layoutProperties.customFontSize.small))
                             .boxStyle(
                                 foregroundStyle: .black,
                                 background: light,
@@ -157,92 +213,56 @@ struct CueTimerView: View {
                     Spacer()
                     HStack {
                         Button {
-                            timerWorkout.goToPreviousTimer()
+                            workoutManager.goToPreviousTimer()
                         } label: {
                             Image(systemName: "arrowshape.backward.fill")
                         }
-                        .foregroundStyle(timerWorkout.previousButtonDisabled ? light : dark)
-                        .disabled(timerWorkout.previousButtonDisabled)
+                        .foregroundStyle(workoutManager.previousTimerButtonDisabled ? light : dark)
+                        .disabled(workoutManager.previousTimerButtonDisabled)
                         Spacer()
                         HStack(spacing: 20) {
                             Button {
-                                timerWorkout.startTimer()
+                                workoutManager.startTimer()
                             } label: {
                                 Image(systemName: "play.fill")
                             }
-                            .foregroundStyle(timerWorkout.playButtonDisabled ? light : dark)
-                            .disabled(timerWorkout.playButtonDisabled)
+                            .foregroundStyle(workoutManager.playButtonDisabled ? light : dark)
+                            .disabled(workoutManager.playButtonDisabled)
                             Button {
-                                timerWorkout.stopTimer()
+                                workoutManager.stopTimer()
                             } label: {
                                 Image(systemName: "pause.fill")
                             }
-                            .foregroundStyle(timerWorkout.pauseButtonDisabled ? light : dark)
-                            .disabled(timerWorkout.pauseButtonDisabled)
+                            .foregroundStyle(workoutManager.pauseButtonDisabled ? light : dark)
+                            .disabled(workoutManager.pauseButtonDisabled)
                         }
                         Spacer()
                         Button {
-                            timerWorkout.goToNextTimer()
+                            workoutManager.goToNextTimer()
                         } label: {
                             Image(systemName: "arrowshape.forward.fill")
                         }
-                        .foregroundStyle(timerWorkout.nextButtonDisabled ? light : dark)
-                        .disabled(timerWorkout.nextButtonDisabled)
+                        .foregroundStyle(workoutManager.nextButtonDisabled ? light : dark)
+                        .disabled(workoutManager.nextButtonDisabled)
                     }
                     .padding(.horizontal, 21)
                     .padding(.bottom, 10)
-                    .font(.system(size: layoutProperties.customFontSize.large))
+                    .font(.largeTitle)
                 }
                 .overlay(showEditAlert || showExitAlert ? .gray.opacity(0.3) : .gray.opacity(0.0))
                 .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            timerWorkout.stopTimer()
-                            if timerWorkout.totalRemainingTime == 0 {
-                                navigateToHomepage = true
-                            } else {
-                                showExitAlert = true
-                            }
-                        } label: {
-                            Image(systemName: "house.fill")
-                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
-                                .foregroundColor(dark)
-                                .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            timerWorkout.stopTimer()
-                            showEditAlert = true
-                        } label: {
-                            Image(systemName: "pencil.line")
-                                .font(.system(size: layoutProperties.customFontSize.mediumLarge))
-                                .foregroundColor(dark)
-                                .blur(radius: showEditAlert || showExitAlert ? 0.6 : 0.0)
-                        }
-                        .navigationDestination(isPresented: $navigateToTimerEntry) {
-                            ResponsiveLayout { layoutProperties in
-                                TimerEntryView(cuetimer: cuetimer, layoutProperties: layoutProperties)
-                            }
-                            
-                        }
-                    }
-                }
                 
                 if showEditAlert || showExitAlert {
                     let alertTitle = "Progress will be lost"
-                    let alertText = showEditAlert ? "Do you still want to edit this workout?" : "Do you still want to exit this workout?"
+                    let alertText = showEditAlert ? "Still want to edit this workout?" : "Still want to exit this workout?"
                     VStack(spacing: 0) {
                         Text(alertTitle)
-                            .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                            .font(.title3)
                             .fontWeight(.semibold)
                             .padding(.top, 20)
                             .padding(.horizontal, 10)
                             
                         Text(alertText)
-                            .font(.system(size: layoutProperties.customFontSize.small * 0.9))
                             .padding(.top, 5)
                             .padding(.bottom, 15)
                             .padding(.horizontal, 15)
@@ -268,17 +288,19 @@ struct CueTimerView: View {
                             Button("Yes") {
                                 if showEditAlert {
                                     showEditAlert = false
+                                    workoutManager.partialReset()
                                     navigateToTimerEntry = true
                                 } else {
                                     showExitAlert = false
-                                    navigateToHomepage = true
+                                    workoutManager.totalReset()
+                                    dismiss()
                                 }
                             }
                             .frame(maxWidth: .infinity)
                             .padding(10)
                         }
                         .foregroundStyle(themeManager.theme.darkColor)
-                        .font(.system(size: layoutProperties.customFontSize.small * 1.1))
+                        .font(.title3)
                     }
                     .frame(maxWidth: .infinity)
                     .foregroundStyle(.black)
@@ -289,16 +311,13 @@ struct CueTimerView: View {
                     .padding(.bottom, 60)
                 }
             }
-            .navigationDestination(isPresented: $navigateToHomepage) {
-                ResponsiveLayout { layoutProperties in
-                    HomepageView(layoutProperties: layoutProperties)
-                }
+            .navigationDestination(isPresented: $navigateToTimerEntry) {
+                TimerEntryView(cuetimer: cuetimer, cuesModified: false)
             }
         }
         .navigationBarBackButtonHidden(true)
         .onAppear {
-            timerWorkout.createTimerArray()
-            timerWorkout.startTimer()
+            workoutManager.startTimer()
         }
     }
     
@@ -309,13 +328,13 @@ struct CueTimerView: View {
     }
     
     func getTimerColor() -> Color {
-        if timerWorkout.endOfSegment {
-            if timerWorkout.timerSegments[timerWorkout.curr - 1].work {
+        if workoutManager.endOfSegment {
+            if workoutManager.timerSegments[workoutManager.timerCurr - 1].work {
                 return dark
             } else {
                 return dark.opacity(0.3)
             }
-        } else if timerWorkout.timerSegments[timerWorkout.curr].work {
+        } else if workoutManager.timerSegments[workoutManager.timerCurr].work {
             return dark
         } else {
             return dark.opacity(0.3)
@@ -325,14 +344,11 @@ struct CueTimerView: View {
 
 struct CueTimerWorkout_Previews: PreviewProvider {
     static var previews: some View {
-        
-        let entries = Entries()
-    
-        ResponsiveLayout { layoutProperties in
-            CueTimerView(timerWorkout: TimerWorkout(cueWorkout: CueWorkout(cueEntries: entries.cueEntries, cuetimer: false), cuetimer: false, timerEntry: entries.timerEntry), cuetimer: false, layoutProperties: layoutProperties)
-                .environmentObject(AuthManager())
-                .environmentObject(ThemeManager())
-                .environmentObject(entries)
-        }
+        CueTimerView(cuetimer: false)
+            .environmentObject(DataManager())
+            .environmentObject(AuthManager())
+            .environmentObject(ThemeManager())
+            .environmentObject(WorkoutManager())
+            .environmentObject(SoundManager())
     }
 }

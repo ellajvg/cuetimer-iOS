@@ -8,10 +8,12 @@
 import SwiftUI
 
 class Entries: ObservableObject {
+    @Published var name: String?
     @Published var cueEntries: [CueEntry] = []
     @Published var timerEntry: TimerEntry = TimerEntry(workPeriods: [30])
     
     func reset() {
+        name = nil
         cueEntries = []
         timerEntry = TimerEntry(workPeriods: [30])
     }
